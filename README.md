@@ -40,24 +40,42 @@ IdentityFinder/
 └── multiUsersIdentity.py  # Step 3: Final Matching (The Judge)
 ```
 
-Synchronize Identities (The Brain)
-The AI scans your known_faces/ folders, calculates the mean vector for each identity using a Refined Box strategy (focusing on facial features, ignoring hair), and saves it to SQL.
+
+How to Use
+
+1. Prerequisites
+
+```bash
+# Core AI Engines
+pip install face_recognition deepface
+
+# Utilities & Database
+pip install opencv-python pyodbc numpy
+```
+
+2.Database Setup
+Create a SQL Server database named IdentityFinder.
+
+Ensure the CONN_STR variable in all .py files matches your local instance (e.g., Server=localhost\SQLEXPRESS).
+
+3.Execution Flow
+Step 1: Synchronize Identities (The Brain)
+Place high-quality reference images in known_faces/. The script calculates a Master Centroid Vector for each identity using a Refined Box strategy (auto-shrinking the detection box to focus on facial features while ignoring hair interference).
 
 ```bash
 python users_encoding.py
 ```
 
-Mass Extraction (The Worker)
-Drop your unlabeled images into test_100_celebA/ and let the script extract facial features using YOLOv5 and RetinaFace.
+Step 2 : Mass Extraction (The Worker)
+Place your unlabeled images in test_100_celebA/. This script uses YOLOv5 (Anime) and RetinaFace (Human) to extract facial landmarks and store them in SQL.
+
 
 ```bash
 python data_encoding.py
 ```
-
-Final Matching (The Judge)
-Run the matcher to compare features against the Master database.
+Step 3: Identity Recognition (The Judge)
+Run the matcher to compare extracted features against the Master database.
 
 ```bash
 python multiUsersIdentity.py
 ```
-
