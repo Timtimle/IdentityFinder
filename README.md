@@ -79,3 +79,5 @@ Run the matcher to compare extracted features against the Master database.
 ```bash
 python multiUsersIdentity.py
 ```
+<img width="841" height="403" alt="image" src="https://github.com/user-attachments/assets/2a6806bc-2b6d-471a-a408-c648a9451a41" />
+<img width="429" height="632" alt="image" src="https://github.com/user-attachments/assets/d20a5841-07b5-439e-bbb1-3b83c2973251" />
