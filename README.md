@@ -2,7 +2,7 @@
 
 The simplest, fastest tool for auto-labeling mixed datasets of Anime characters and Humans.
 
-This repository provides a pragmatic, hybrid approach to image labeling. Instead of manual clicking, IdentityFinder uses AI to scan, encode, and identify faces against a centralized SQL database. The code is designed to be plain, readable, and highly effective for developers handling large image collections.
+This repository provides a pragmatic, hybrid approach to image labeling. Instead of manual clicking, **IdentityFinder** uses AI to scan, encode, and identify faces against a centralized SQL database. The code is designed to be plain, readable, and highly effective for developers handling large image collections.
 
 ---
 
@@ -26,12 +26,15 @@ Installation is straightforward. You will need Python 3.8+ and a local SQL Serve
 pip install torch face_recognition deepface pyodbc numpy opencv-python
 ```
 
+## Directory Structure
+
+```text
 IdentityFinder/
 ├── anime_detection/       # YOLOv5 core logic & weights
-├── known_faces/           # MASTER DATA (Kazusa, Khang, Nghia...)
+├── known_faces/           # MASTER DATA (Training samples)
 │   ├── anime/             # Sub-folder for Anime characters
 │   └── person/            # Sub-folder for Real Humans
-├── test_100_celebA/       # Target images to be labeled
+├── test_100_celebA/       # Target images to be labeled (Inference data)
 ├── users_encoding.py      # Step 1: Identity Sync (The Brain)
 ├── data_encoding.py       # Step 2: Mass Extraction (The Worker)
-└── multiUsersIdentity_... # Step 3: Final Matching (The Judge)
+└── multiUsersIdentity.py  # Step 3: Final Matching (The Judge)
