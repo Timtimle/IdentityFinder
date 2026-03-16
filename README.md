@@ -1,8 +1,7 @@
 # IdentityFinder
 
-The simplest, fastest tool for auto-labeling mixed datasets of Anime characters and Humans.
-
-This repository provides a pragmatic, hybrid approach to image labeling. Instead of manual clicking, **IdentityFinder** uses AI to scan, encode, and identify faces against a centralized SQL database. The code is designed to be plain, readable, and highly effective for developers handling large image collections.
+IdentityFinder is a tool for identifying individuals in image collections containing one or more people, while also detecting anime-style faces.
+It scans images, detects faces, generates facial embeddings, and matches them against identities stored in a centralized database to automatically label the dataset.
 
 ---
 
