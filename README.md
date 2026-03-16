@@ -24,6 +24,7 @@ Installation is straightforward. You will need Python 3.8+ and a local SQL Serve
 
 ```bash
 pip install torch face_recognition deepface pyodbc numpy opencv-python
+```
 
 IdentityFinder/
 ├── anime_detection/       # YOLOv5 core logic & weights
