@@ -38,3 +38,26 @@ IdentityFinder/
 ├── users_encoding.py      # Step 1: Identity Sync (The Brain)
 ├── data_encoding.py       # Step 2: Mass Extraction (The Worker)
 └── multiUsersIdentity.py  # Step 3: Final Matching (The Judge)
+```
+
+Synchronize Identities (The Brain)
+The AI scans your known_faces/ folders, calculates the mean vector for each identity using a Refined Box strategy (focusing on facial features, ignoring hair), and saves it to SQL.
+
+```bash
+python users_encoding.py
+```
+
+Mass Extraction (The Worker)
+Drop your unlabeled images into test_100_celebA/ and let the script extract facial features using YOLOv5 and RetinaFace.
+
+```bash
+python data_encoding.py
+```
+
+Final Matching (The Judge)
+Run the matcher to compare features against the Master database.
+
+```bash
+python multiUsersIdentity.py
+```
+
