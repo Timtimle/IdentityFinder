@@ -1,77 +1,113 @@
-import face_recognition
-import pyodbc
 import os
 import sys
 import io
-from deepface import DeepFace 
+import time
+import torch
+import face_recognition
+import pyodbc
+import numpy as np
+from deepface import DeepFace
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-CONN_STR = (
-    "Driver={SQL Server};"
-    "Server=localhost\SQLEXPRESS;"
-    "Database=IdentityFinder;"
-    "Trusted_Connection=yes;"
-)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ANIME_PATH = os.path.join(BASE_DIR, "anime_detection")
+if ANIME_PATH not in sys.path: 
+    sys.path.append(ANIME_PATH)
 
-try:
-    conn = pyodbc.connect(CONN_STR)
-    cursor = conn.cursor()
-    print("System: SQL Connected. Starting Mass Encoding with Gender Detection...")
-except Exception as e:
-    print(f"Error: Connection failed - {e}")
-    exit()
-import io
-TEST_FOLDER = "test_100_celebA"
+from models.experimental import attempt_load
+from utils.general import non_max_suppression, scale_coords
+from utils.datasets import letterbox
 
-if not os.path.exists(TEST_FOLDER):
-    print(f"Error: Folder {TEST_FOLDER} not found!")
-    exit()
+CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
+TEST_FOLDER = os.path.join(BASE_DIR, "test_100_celebA")
+WEIGHTS = os.path.join(ANIME_PATH, "weights", "yolov5s_anime.pt")
 
-for filename in os.listdir(TEST_FOLDER):
-    file_path = os.path.abspath(os.path.join(TEST_FOLDER, filename))
+device = torch.device('cpu')
+anime_model = attempt_load(WEIGHTS, map_location=device)
+
+def get_anime_locations(img0):
+    img = letterbox(img0, 640)[0]
+    img = torch.from_numpy(img.transpose(2, 0, 1)).to(device).float() / 255.0
+    if img.ndimension() == 3: img = img.unsqueeze(0)
     
-    cursor.execute("SELECT LabelID FROM ImageLabels WHERE FileName = ?", (filename,))
-    if cursor.fetchone():
-        print(f"Skipped: {filename} (Already exists in Database)")
-        continue
+    with torch.no_grad():
+        pred = anime_model(img, augment=False)[0]
+    
+    pred = non_max_suppression(pred, 0.2, 0.45) 
+    
+    locs = []
+    for det in pred:
+        if len(det):
+            det[:, :4] = scale_coords(img.shape[2:], det[:, :4], img0.shape).round()
+            for *xyxy, conf, cls in det:
+                x1, y1, x2, y2 = map(int, xyxy)
+                w, h = x2 - x1, y2 - y1
+                locs.append({'region': [x1, y1, w, h]})
+    return locs
 
-    image = face_recognition.load_image_file(file_path)
-    face_locations = face_recognition.face_locations(image)
-    face_encodings = face_recognition.face_encodings(image, face_locations)
-
-    if not face_encodings:
-        print(f"Skipped: {filename} (No face detected)")
-        continue
-
+def ultra_mass_encoding():
     try:
-        analysis = DeepFace.analyze(img_path=file_path, actions=['gender'], enforce_detection=False)
+        conn = pyodbc.connect(CONN_STR)
+        cursor = conn.cursor()
+        print("-" * 90)
+        print("MASS ENCODING START - HYBRID DETECTION STRATEGY")
+        print("-" * 90)
     except Exception as e:
-        print(f"Gender analysis failed for {filename}: {e}")
-        analysis = []
+        print(f"Database Connection Error: {e}")
+        return
 
-    # 3. Store each detected face into SQL
-    for i, ((top, right, bottom, left), encoding) in enumerate(zip(face_locations, face_encodings)):
-        encoding_str = ",".join(map(str, encoding))
+    all_files = [f for f in os.listdir(TEST_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+    total = len(all_files)
+
+    for index, filename in enumerate(all_files):
+        cursor.execute("SELECT TOP 1 LabelID FROM ImageLabels WHERE FileName = ?", (filename,))
+        if cursor.fetchone(): continue
+
+        file_path = os.path.join(TEST_FOLDER, filename)
         
-        gender = "Unknown"
-        if isinstance(analysis, list) and i < len(analysis):
-            gender = analysis[i]['dominant_gender'] # Returns 'Man' or 'Woman'
-        elif isinstance(analysis, dict): 
-            gender = analysis['dominant_gender']
+        anime_keywords = ["anime", "waifu", "vn", "kazusa", "haruki", "kurisu"]
+        is_anime = any(kw in filename.lower() for kw in anime_keywords)
 
         try:
-            cursor.execute("""
-                INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (filename, file_path, "Pending", gender, left, top, right - left, bottom - top, encoding_str))
+            start_time = time.time()
+            image = face_recognition.load_image_file(file_path)
+            faces_count = 0
+            
+            if is_anime:
+                anime_faces = get_anime_locations(image)
+                for item in anime_faces:
+                    x, y, w, h = item['region']
+                    cursor.execute("""
+                        INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)
+                    """, (filename, file_path, 'Anime_Character', 'Anime', x, y, w, h))
+                faces_count = len(anime_faces)
+            else:
+                faces = DeepFace.extract_faces(img_path=file_path, detector_backend='retinaface', enforce_detection=False)
+                for f in faces:
+                    if f['confidence'] > 0.4:
+                        r = f['facial_area']
+                        encs = face_recognition.face_encodings(image, [(r['y'], r['x']+r['w'], r['y']+r['h'], r['x'])], model="large")
+                        if encs:
+                            enc_str = ",".join(map(str, encs[0]))
+                            cursor.execute("""
+                                INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            """, (filename, file_path, 'Person', 'Human', r['x'], r['y'], r['w'], r['h'], enc_str))
+                            faces_count += 1
+            
             conn.commit()
+            duration = time.time() - start_time
+            print(f"[{index+1}/{total}] {filename} | Anime: {is_anime} | Faces: {faces_count} | {duration:.2f}s")
+            
         except Exception as e:
-            print(f"SQL Error at {filename}: {e}")
+            print(f"Processing Error at {filename}: {e}")
 
-    print(f"Encoded & Stored: {filename} (Gender: {gender})")
+    conn.close()
+    print("-" * 90)
+    print("FINISHED: All files processed.")
 
-print("--- [FINISH] All 100 images synchronized with Gender data ---")
-conn.close()
+if __name__ == "__main__":
+    ultra_mass_encoding()

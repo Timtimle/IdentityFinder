@@ -1,66 +1,79 @@
-import face_recognition
-import pyodbc
 import os
 import sys
 import io
+import face_recognition
+import pyodbc
+import numpy as np
 from deepface import DeepFace
 
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-CONN_STR = "Driver={SQL Server};Server=localhost\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
-conn = pyodbc.connect(CONN_STR)
-cursor = conn.cursor()
+CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
 
-KNOWN_DIR = "known_faces"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PERSON_KNOWN_PATH = os.path.join(BASE_DIR, "known_faces", "person")
 
-if not os.path.exists(KNOWN_DIR):
-    print(f"Error: Folder '{KNOWN_DIR}' not found!")
-    exit()
+def sync_person_master_data():
+    if not os.path.exists(PERSON_KNOWN_PATH):
+        print(f"Error: Master directory not found at {PERSON_KNOWN_PATH}")
+        return
 
-print(f"System: Scanning identities and detecting gender from '{KNOWN_DIR}'...")
+    try:
+        conn = pyodbc.connect(CONN_STR)
+        cursor = conn.cursor()
+        print("=" * 95)
+        print(f"{'CATEGORY':<10} | {'USER NAME':<25} | {'IMG COUNT':<10} | {'STATUS'}")
+        print("-" * 95)
+    except Exception as e:
+        print(f"SQL Connection Error: {e}")
+        return
 
-for filename in os.listdir(KNOWN_DIR):
-    if filename.endswith((".jpg", ".png", ".jpeg")):
-        img_path = os.path.join(KNOWN_DIR, filename)
-        user_name = os.path.splitext(filename)[0]
+    for sub_name in os.listdir(PERSON_KNOWN_PATH):
+        sub_path = os.path.join(PERSON_KNOWN_PATH, sub_name)
+        if not os.path.isdir(sub_path): continue
 
-        image = face_recognition.load_image_file(img_path)
-        encodings = face_recognition.face_encodings(image)
+        db_user_name = sub_name.lower()
 
-        if encodings:
-            encoding_str = ",".join(map(str, encodings[0]))
+        cursor.execute("SELECT UserName FROM Users WHERE UserName = ?", (db_user_name,))
+        if cursor.fetchone():
+            print(f"{'Person':<10} | {sub_name:<25} | --         | SKIPPED (Exists)")
+            continue
 
+        all_encodings = []
+        img_files = [f for f in os.listdir(sub_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+        
+        for filename in img_files:
+            img_path = os.path.join(sub_path, filename)
             try:
-                analysis = DeepFace.analyze(img_path=img_path, actions=['gender'], enforce_detection=False)
-                if isinstance(analysis, list):
-                    gender = analysis[0]['dominant_gender']
-                else:
-                    gender = analysis['dominant_gender']
-            except Exception as e:
-                print(f"Gender detection failed for {user_name}: {e}")
-                gender = "Unknown"
+                dets = DeepFace.extract_faces(img_path=img_path, detector_backend='retinaface', enforce_detection=False)
+                
+                if dets and dets[0]['confidence'] > 0.4:
+                    best_face = max(dets, key=lambda x: x['facial_area']['w'] * x['facial_area']['h'])
+                    r = best_face['facial_area']
+                    face_loc = [(r['y'], r['x'] + r['w'], r['y'] + r['h'], r['x'])]
+                    
+                    image = face_recognition.load_image_file(img_path)
+                    encs = face_recognition.face_encodings(image, face_loc, num_jitters=20, model="large")
+                    
+                    if encs:
+                        all_encodings.append(encs[0])
+            except Exception:
+                continue
 
-            cursor.execute("SELECT UserID FROM Users WHERE UserName = ?", (user_name,))
-            existing_user = cursor.fetchone()
+        if all_encodings:
+            avg_enc = np.mean(all_encodings, axis=0)
+            enc_str = ",".join(map(str, avg_enc))
 
-            if existing_user:
-                cursor.execute("""
-                    UPDATE Users 
-                    SET FaceData = ?, Gender = ? 
-                    WHERE UserName = ?
-                """, (encoding_str, gender, user_name))
-                print(f"Updated Identity: {user_name} ({gender})")
-            else:
-                cursor.execute("""
-                    INSERT INTO Users (UserName, FaceData, Gender) 
-                    VALUES (?, ?, ?)
-                """, (user_name, encoding_str, gender))
-                print(f"Registered New Identity: {user_name} ({gender})")
-            
+            cursor.execute("INSERT INTO Users (UserName, FaceData, Gender) VALUES (?, ?, ?)", 
+                           (db_user_name, enc_str, "Human"))
             conn.commit()
+            print(f"{'Person':<10} | {sub_name:<25} | {len(all_encodings):<10} | SUCCESS")
         else:
-            print(f"Warning: No face detected in {filename}")
+            print(f"{'Person':<10} | {sub_name:<25} | 0          | FAILED")
 
-print("--- [FINISH] Users table is now synchronized with Gender data ---")
-conn.close()
+    conn.close()
+    print("=" * 95)
+    print("FINISH: Master synchronization for 'person' folder complete.")
+
+if __name__ == "__main__":
+    sync_person_master_data()
