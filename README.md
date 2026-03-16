@@ -24,3 +24,13 @@ Installation is straightforward. You will need Python 3.8+ and a local SQL Serve
 
 ```bash
 pip install torch face_recognition deepface pyodbc numpy opencv-python
+
+IdentityFinder/
+├── anime_detection/       # YOLOv5 core logic & weights
+├── known_faces/           # MASTER DATA (Kazusa, Khang, Nghia...)
+│   ├── anime/             # Sub-folder for Anime characters
+│   └── person/            # Sub-folder for Real Humans
+├── test_100_celebA/       # Target images to be labeled
+├── users_encoding.py      # Step 1: Identity Sync (The Brain)
+├── data_encoding.py       # Step 2: Mass Extraction (The Worker)
+└── multiUsersIdentity_... # Step 3: Final Matching (The Judge)
