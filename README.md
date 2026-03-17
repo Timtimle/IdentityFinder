@@ -58,6 +58,7 @@ Create a SQL Server database named IdentityFinder.
 Ensure the CONN_STR variable in all .py files matches your local instance (e.g., Server=localhost\SQLEXPRESS).
 
 3.Execution Flow
+
 Step 1: Synchronize Identities (The Brain)
 Place high-quality reference images in known_faces/. The script calculates a Master Centroid Vector for each identity using a Refined Box strategy (auto-shrinking the detection box to focus on facial features while ignoring hair interference).
 
@@ -68,10 +69,10 @@ python users_encoding.py
 Step 2 : Mass Extraction (The Worker)
 Place your unlabeled images in test_100_celebA/. This script uses YOLOv5 (Anime) and RetinaFace (Human) to extract facial landmarks and store them in SQL.
 
-
 ```bash
 python data_encoding.py
 ```
+
 Step 3: Identity Recognition (The Judge)
 Run the matcher to compare extracted features against the Master database.
 
