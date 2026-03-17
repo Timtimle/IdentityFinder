@@ -42,7 +42,7 @@ IdentityFinder/
 
 How to Use
 
-1. Prerequisites
+Prerequisites
 
 ```bash
 # Core AI Engines
@@ -52,7 +52,8 @@ pip install face_recognition deepface
 pip install opencv-python pyodbc numpy
 ```
 
-2.Database Setup
+Database Setup
+
 Create a SQL Server database named IdentityFinder.
 
 Ensure the CONN_STR variable in all .py files matches your local instance (e.g., Server=localhost\SQLEXPRESS).
