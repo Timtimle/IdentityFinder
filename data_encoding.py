@@ -3,7 +3,6 @@ import sys
 import io
 import time
 import torch
-import face_recognition
 import pyodbc
 import numpy as np
 from deepface import DeepFace
@@ -20,14 +19,17 @@ from models.experimental import attempt_load
 from utils.general import non_max_suppression, scale_coords
 from utils.datasets import letterbox
 
+# SQL & Folder Config
 CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
-TEST_FOLDER = os.path.join(BASE_DIR, "test_100_celebA")
+TEST_FOLDER = os.path.join(BASE_DIR, "test_per")
 WEIGHTS = os.path.join(ANIME_PATH, "weights", "yolov5s_anime.pt")
 
+# Load Anime Model
 device = torch.device('cpu')
 anime_model = attempt_load(WEIGHTS, map_location=device)
 
 def get_anime_locations(img0):
+    """ Detects anime faces using YOLOv5 """
     img = letterbox(img0, 640)[0]
     img = torch.from_numpy(img.transpose(2, 0, 1)).to(device).float() / 255.0
     if img.ndimension() == 3: img = img.unsqueeze(0)
@@ -44,16 +46,21 @@ def get_anime_locations(img0):
             for *xyxy, conf, cls in det:
                 x1, y1, x2, y2 = map(int, xyxy)
                 w, h = x2 - x1, y2 - y1
-                locs.append({'region': [x1, y1, w, h]})
+                locs.append({'region': [x1, y1, w, h], 'confidence': float(conf)})
     return locs
 
 def ultra_mass_encoding():
+    """ 
+    Mass Encoding Engine:
+    - Anime: YOLOv5 Detection
+    - Human: RetinaFace + FaceNet 512 + Gender Analysis
+    """
     try:
         conn = pyodbc.connect(CONN_STR)
         cursor = conn.cursor()
-        print("-" * 90)
-        print("MASS ENCODING START - HYBRID DETECTION STRATEGY")
-        print("-" * 90)
+        print("-" * 110)
+        print(f"{'MASS ENCODING START (FACENET-512 MODE)':^110}")
+        print("-" * 110)
     except Exception as e:
         print(f"Database Connection Error: {e}")
         return
@@ -63,51 +70,73 @@ def ultra_mass_encoding():
 
     for index, filename in enumerate(all_files):
         cursor.execute("SELECT TOP 1 LabelID FROM ImageLabels WHERE FileName = ?", (filename,))
-        if cursor.fetchone(): continue
+        if cursor.fetchone(): 
+            continue
 
         file_path = os.path.join(TEST_FOLDER, filename)
         
-        anime_keywords = ["anime", "waifu", "vn", "kazusa", "haruki", "kurisu"]
+        anime_keywords = ["anime", "waifu", "vn", "kazusa", "haruki", "kurisu", "white_album"]
         is_anime = any(kw in filename.lower() for kw in anime_keywords)
 
         try:
             start_time = time.time()
-            image = face_recognition.load_image_file(file_path)
             faces_count = 0
             
             if is_anime:
-                anime_faces = get_anime_locations(image)
+                import cv2
+                image_cv = cv2.imread(file_path)
+                anime_faces = get_anime_locations(image_cv)
                 for item in anime_faces:
                     x, y, w, h = item['region']
+                    conf = item['confidence']
                     cursor.execute("""
-                        INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)
-                    """, (filename, file_path, 'Anime_Character', 'Anime', x, y, w, h))
+                        INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData, Confidence)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)
+                    """, (filename, file_path, 'Anime_Character', 'Anime', x, y, w, h, conf))
                 faces_count = len(anime_faces)
+            
             else:
-                faces = DeepFace.extract_faces(img_path=file_path, detector_backend='retinaface', enforce_detection=False)
-                for f in faces:
-                    if f['confidence'] > 0.4:
-                        r = f['facial_area']
-                        encs = face_recognition.face_encodings(image, [(r['y'], r['x']+r['w'], r['y']+r['h'], r['x'])], model="large")
-                        if encs:
-                            enc_str = ",".join(map(str, encs[0]))
+                results = DeepFace.analyze(
+                    img_path=file_path, 
+                    actions=['gender'], 
+                    detector_backend='retinaface', 
+                    enforce_detection=False,
+                    silent=True
+                )
+                
+                embeddings = DeepFace.represent(
+                    img_path=file_path,
+                    model_name="Facenet512",
+                    detector_backend='retinaface',
+                    enforce_detection=False
+                )
+                
+                for i, f in enumerate(results):
+                    if f['face_confidence'] > 0.4:
+                        r = f['region']
+                        gender_label = f['dominant_gender']
+                        conf = f['face_confidence']
+                        
+                        if i < len(embeddings):
+                            vector_512 = embeddings[i]['embedding']
+                            enc_str = ",".join(map(str, vector_512))
+                            
                             cursor.execute("""
-                                INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                            """, (filename, file_path, 'Person', 'Human', r['x'], r['y'], r['w'], r['h'], enc_str))
+                                INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData, Confidence)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            """, (filename, file_path, 'Person', gender_label, r['x'], r['y'], r['w'], r['h'], enc_str, conf))
                             faces_count += 1
             
             conn.commit()
             duration = time.time() - start_time
-            print(f"[{index+1}/{total}] {filename} | Anime: {is_anime} | Faces: {faces_count} | {duration:.2f}s")
+            print(f"[{index+1}/{total}] {filename[:25]:<25} | Faces: {faces_count} | {duration:.2f}s | OK")
             
         except Exception as e:
-            print(f"Processing Error at {filename}: {e}")
+            print(f"Error at {filename}: {e}")
 
     conn.close()
-    print("-" * 90)
-    print("FINISHED: All files processed.")
+    print("-" * 110)
+    print("FINISHED: Database updated with FaceNet-512 Embeddings and Gender.")
 
 if __name__ == "__main__":
     ultra_mass_encoding()

@@ -1,29 +1,33 @@
 import os
 import sys
 import io
-import face_recognition
 import pyodbc
 import numpy as np
 from deepface import DeepFace
 
+# Support for UTF-8 output
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PERSON_KNOWN_PATH = os.path.join(BASE_DIR, "known_faces", "person")
+PERSON_KNOWN_PATH = os.path.join(BASE_DIR, "knowns_faces_1", "person")
 
 def sync_person_master_data():
+    """
+    SMART DELTA SYNC:
+    - Skips already synced users to save time.
+    - Only processes new folders found in PERSON_KNOWN_PATH.
+    """
     if not os.path.exists(PERSON_KNOWN_PATH):
-        print(f"Error: Master directory not found at {PERSON_KNOWN_PATH}")
+        print(f"ERROR: Directory not found: {PERSON_KNOWN_PATH}")
         return
 
     try:
         conn = pyodbc.connect(CONN_STR)
         cursor = conn.cursor()
-        print("=" * 95)
-        print(f"{'CATEGORY':<10} | {'USER NAME':<25} | {'IMG COUNT':<10} | {'STATUS'}")
-        print("-" * 95)
+        print("=" * 130)
+        print(f"{'USER NAME':<25} | {'GENDER':<12} | {'IMGS':<10} | {'ACTION':<15} | {'STATUS'}")
+        print("-" * 130)
     except Exception as e:
         print(f"SQL Connection Error: {e}")
         return
@@ -32,48 +36,59 @@ def sync_person_master_data():
         sub_path = os.path.join(PERSON_KNOWN_PATH, sub_name)
         if not os.path.isdir(sub_path): continue
 
-        db_user_name = sub_name.lower()
+        db_user_name = sub_name.lower() # Biến chuẩn ở đây
+        img_files = [f for f in os.listdir(sub_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+        current_count = len(img_files)
+        
+        if current_count == 0: continue
 
+        # --- Check if already exists ---
         cursor.execute("SELECT UserName FROM Users WHERE UserName = ?", (db_user_name,))
         if cursor.fetchone():
-            print(f"{'Person':<10} | {sub_name:<25} | --         | SKIPPED (Exists)")
+            print(f"{sub_name:<25} | {'--':<12} | {current_count:<10} | {'ALREADY SYNCED':<15} | SKIPPED")
             continue
 
+        # --- Start processing new user ---
         all_encodings = []
-        img_files = [f for f in os.listdir(sub_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        
+        all_genders = [] 
+
         for filename in img_files:
             img_path = os.path.join(sub_path, filename)
             try:
-                dets = DeepFace.extract_faces(img_path=img_path, detector_backend='retinaface', enforce_detection=False)
-                
-                if dets and dets[0]['confidence'] > 0.4:
-                    best_face = max(dets, key=lambda x: x['facial_area']['w'] * x['facial_area']['h'])
-                    r = best_face['facial_area']
-                    face_loc = [(r['y'], r['x'] + r['w'], r['y'] + r['h'], r['x'])]
+                # Analyze with RetinaFace
+                analysis = DeepFace.analyze(img_path=img_path, actions=['gender'], 
+                                           detector_backend='retinaface', enforce_detection=False, silent=True)
+                if analysis:
+                    all_genders.append(analysis[0]['dominant_gender'])
                     
-                    image = face_recognition.load_image_file(img_path)
-                    encs = face_recognition.face_encodings(image, face_loc, num_jitters=20, model="large")
-                    
-                    if encs:
-                        all_encodings.append(encs[0])
-            except Exception:
-                continue
+                    # Facenet512 embedding
+                    embeddings = DeepFace.represent(img_path=img_path, model_name="Facenet512", 
+                                                   detector_backend='retinaface', enforce_detection=False)
+                    if embeddings:
+                        all_encodings.append(embeddings[0]['embedding'])
+            except: continue
 
         if all_encodings:
             avg_enc = np.mean(all_encodings, axis=0)
             enc_str = ",".join(map(str, avg_enc))
+            final_gender = max(set(all_genders), key=all_genders.count)
+            
+            abs_avatar_path = os.path.join(sub_path, img_files[0])
+            rel_avatar_path = os.path.relpath(abs_avatar_path, BASE_DIR).replace("\\", "/")
 
-            cursor.execute("INSERT INTO Users (UserName, FaceData, Gender) VALUES (?, ?, ?)", 
-                           (db_user_name, enc_str, "Human"))
+            # --- Fixed: Using correct variable 'db_user_name' ---
+            cursor.execute("""
+                INSERT INTO Users (UserName, FaceData, Gender, UserAvatar) 
+                VALUES (?, ?, ?, ?)
+            """, (db_user_name, enc_str, final_gender, rel_avatar_path))
+            
             conn.commit()
-            print(f"{'Person':<10} | {sub_name:<25} | {len(all_encodings):<10} | SUCCESS")
+            print(f"{sub_name:<25} | {final_gender:<12} | {len(all_encodings):<10} | {'INSERTED':<15} | SUCCESS")
         else:
-            print(f"{'Person':<10} | {sub_name:<25} | 0          | FAILED")
+            print(f"{sub_name:<25} | {'N/A':<12} | 0          | {'FAILED':<15} | ERROR")
 
     conn.close()
-    print("=" * 95)
-    print("FINISH: Master synchronization for 'person' folder complete.")
+    print("=" * 130)
 
 if __name__ == "__main__":
     sync_person_master_data()
