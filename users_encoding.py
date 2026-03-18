@@ -5,7 +5,6 @@ import pyodbc
 import numpy as np
 from deepface import DeepFace
 
-# Support for UTF-8 output
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
@@ -13,11 +12,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PERSON_KNOWN_PATH = os.path.join(BASE_DIR, "knowns_faces_1", "person")
 
 def sync_person_master_data():
-    """
-    SMART DELTA SYNC:
-    - Skips already synced users to save time.
-    - Only processes new folders found in PERSON_KNOWN_PATH.
-    """
     if not os.path.exists(PERSON_KNOWN_PATH):
         print(f"ERROR: Directory not found: {PERSON_KNOWN_PATH}")
         return
@@ -36,26 +30,23 @@ def sync_person_master_data():
         sub_path = os.path.join(PERSON_KNOWN_PATH, sub_name)
         if not os.path.isdir(sub_path): continue
 
-        db_user_name = sub_name.lower() # Biến chuẩn ở đây
+        db_user_name = sub_name.lower()
         img_files = [f for f in os.listdir(sub_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
         current_count = len(img_files)
         
         if current_count == 0: continue
 
-        # --- Check if already exists ---
         cursor.execute("SELECT UserName FROM Users WHERE UserName = ?", (db_user_name,))
         if cursor.fetchone():
             print(f"{sub_name:<25} | {'--':<12} | {current_count:<10} | {'ALREADY SYNCED':<15} | SKIPPED")
             continue
 
-        # --- Start processing new user ---
         all_encodings = []
         all_genders = [] 
 
         for filename in img_files:
             img_path = os.path.join(sub_path, filename)
             try:
-                # Analyze with RetinaFace
                 analysis = DeepFace.analyze(img_path=img_path, actions=['gender'], 
                                            detector_backend='retinaface', enforce_detection=False, silent=True)
                 if analysis:
@@ -76,7 +67,6 @@ def sync_person_master_data():
             abs_avatar_path = os.path.join(sub_path, img_files[0])
             rel_avatar_path = os.path.relpath(abs_avatar_path, BASE_DIR).replace("\\", "/")
 
-            # --- Fixed: Using correct variable 'db_user_name' ---
             cursor.execute("""
                 INSERT INTO Users (UserName, FaceData, Gender, UserAvatar) 
                 VALUES (?, ?, ?, ?)

@@ -8,25 +8,14 @@ import shutil
 from collections import defaultdict
 from scipy.spatial import distance
 
-# Hỗ trợ tiếng Việt cho Console
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# Cấu hình SQL Server
 CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
 
-# Thiết lập thư mục làm việc (Sử dụng GetCurrentDirectory để WinForm dễ nhận diện)
 BASE_DIR = os.getcwd() 
 RESULT_IMG_DIR = os.path.join(BASE_DIR, "web_results")
 
 def run_hybrid_matching():
-    """
-    ENGINE NHẬN DIỆN & XUẤT BÁO CÁO WEB:
-    - Chạy ngầm hoàn toàn (No imshow).
-    - Xuất file report.html Dark Mode.
-    - Hiển thị Accuracy thực tế từ FaceNet 512-d.
-    """
-    
-    # 1. Làm sạch thư mục kết quả trước khi chạy
     if os.path.exists(RESULT_IMG_DIR):
         shutil.rmtree(RESULT_IMG_DIR)
     os.makedirs(RESULT_IMG_DIR)
@@ -38,7 +27,6 @@ def run_hybrid_matching():
         print(f"Database Error: {e}")
         return
 
-    # --- STEP 1: LOAD DỮ LIỆU NGƯỜI QUEN (USERS) ---
     cursor.execute("SELECT UserName, FaceData FROM Users")
     user_rows = cursor.fetchall()
     known_encs, known_names = [], []
@@ -52,7 +40,6 @@ def run_hybrid_matching():
     
     print(f"[*] Loaded {len(known_encs)} Master Identities.")
 
-    # --- STEP 2: LOAD DỮ LIỆU ẢNH CẦN NHẬN DIỆN (IMAGELABELS) ---
     cursor.execute("SELECT FilePath, FaceData, BoxX, BoxY, BoxW, BoxH, FileName, Gender FROM ImageLabels")
     image_groups = defaultdict(list)
     for row in cursor.fetchall():
@@ -61,7 +48,6 @@ def run_hybrid_matching():
 
     html_items = "" 
 
-    # --- STEP 3: XỬ LÝ SO KHỚP VÀ VẼ BOX ---
     for real_path, faces in image_groups.items():
         full_img_path = real_path if os.path.isabs(real_path) else os.path.normpath(os.path.join(BASE_DIR, real_path))
         if not os.path.exists(full_img_path): continue
@@ -86,34 +72,27 @@ def run_hybrid_matching():
                 curr_enc = np.fromstring(clean_f_data, sep=',')
                 if curr_enc.size != 512 or not known_encs: continue
 
-                # Tính khoảng cách Cosine (Số càng nhỏ càng giống)
                 cosine_dists = [distance.cosine(curr_enc, k_enc) for k_enc in known_encs]
                 best_idx = np.argmin(cosine_dists)
                 cos_val = cosine_dists[best_idx]
                 
-                # Ngưỡng nghiêm ngặt 0.38
                 if cos_val < 0.38: 
                     any_match = True
                     match_name = known_names[best_idx]
                     
-                    # TÍNH TOÁN ACCURACY THỰC TẾ (REAL NUMBERS)
                     acc = (1 - cos_val) * 100 
                     
                     label = f"{match_name} {acc:.1f}%"
                     match_info_list.append(f"<span class='tag human'>Match: {match_name} ({acc:.1f}%)</span>")
 
             if label:
-                # Vẽ khung thanh mảnh (2px)
                 cv2.rectangle(img, (bx, by), (bx + bw, by + bh), color, 2)
-                # Font chữ nhỏ gọn (0.6)
                 cv2.putText(img, label, (bx, by - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2, cv2.LINE_AA)
 
         if any_match:
-            # Lưu ảnh kết quả vào folder web_results
             res_filename = f"res_{os.path.basename(real_path)}"
             cv2.imwrite(os.path.join(RESULT_IMG_DIR, res_filename), img)
 
-            # Tạo nội dung HTML Card
             info_html = "".join(match_info_list)
             html_items += f"""
             <div class="card">
@@ -127,7 +106,6 @@ def run_hybrid_matching():
 
     conn.close()
 
-    # --- STEP 4: XUẤT FILE HTML DARK MODE ---
     html_content = f"""
     <!DOCTYPE html>
     <html lang="en">
