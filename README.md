@@ -13,7 +13,7 @@ IdentityFinder leverages a custom YOLOv5s model optimized for Anime faces and Re
 | :--- | :--- | :--- | :--- |
 | Anime Detect | YOLOv5s | ~50ms/img | 0.95 |
 | Human Detect | RetinaFace | ~120ms/img | 0.98 |
-| Encoding | dlib (large) | ~15ms/face | 128-d vector |
+| Facial Encoding | FaceNet (512-d) | ~25ms/face | Strict 0.38 (Cosine) |
 
 ---
 
