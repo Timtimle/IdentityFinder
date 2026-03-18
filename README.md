@@ -1,8 +1,7 @@
 # IdentityFinder
 
-The simplest, fastest tool for auto-labeling mixed datasets of Anime characters and Humans.
-
-This repository provides a pragmatic, hybrid approach to image labeling. Instead of manual clicking, **IdentityFinder** uses AI to scan, encode, and identify faces against a centralized SQL database. The code is designed to be plain, readable, and highly effective for developers handling large image collections.
+IdentityFinder is a tool for identifying individuals in image collections containing one or more people, while also detecting anime-style faces.
+It scans images, detects faces, generates facial embeddings, and matches them against identities stored in a centralized database to automatically label the dataset.
 
 ---
 
@@ -43,7 +42,7 @@ IdentityFinder/
 
 How to Use
 
-1. Prerequisites
+Prerequisites
 
 ```bash
 # Core AI Engines
@@ -53,12 +52,14 @@ pip install face_recognition deepface
 pip install opencv-python pyodbc numpy
 ```
 
-2.Database Setup
+Database Setup
+
 Create a SQL Server database named IdentityFinder.
 
 Ensure the CONN_STR variable in all .py files matches your local instance (e.g., Server=localhost\SQLEXPRESS).
 
 3.Execution Flow
+
 Step 1: Synchronize Identities (The Brain)
 Place high-quality reference images in known_faces/. The script calculates a Master Centroid Vector for each identity using a Refined Box strategy (auto-shrinking the detection box to focus on facial features while ignoring hair interference).
 
@@ -69,10 +70,10 @@ python users_encoding.py
 Step 2 : Mass Extraction (The Worker)
 Place your unlabeled images in test_100_celebA/. This script uses YOLOv5 (Anime) and RetinaFace (Human) to extract facial landmarks and store them in SQL.
 
-
 ```bash
 python data_encoding.py
 ```
+
 Step 3: Identity Recognition (The Judge)
 Run the matcher to compare extracted features against the Master database.
 
