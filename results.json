@@ -1,0 +1,162 @@
+[
+    {
+        "source_file": "000101.jpg",
+        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\000101.jpg",
+        "result_web_path": "web_results/res_000101.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 102,
+                    "y": 473,
+                    "w": 80,
+                    "h": 102
+                },
+                "type": "Human",
+                "name": "Nghia",
+                "gender": "Man",
+                "accuracy": 95.86,
+                "master_avatar": "knowns_faces_1/person/nghia/nghia.jpg"
+            }
+        ]
+    },
+    {
+        "source_file": "000102.jpg",
+        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\000102.jpg",
+        "result_web_path": "web_results/res_000102.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 117,
+                    "y": 556,
+                    "w": 50,
+                    "h": 57
+                },
+                "type": "Human",
+                "name": "Nghia",
+                "gender": "Man",
+                "accuracy": 73.7,
+                "master_avatar": "knowns_faces_1/person/nghia/nghia.jpg"
+            }
+        ]
+    },
+    {
+        "source_file": "denvau.jpg",
+        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\denvau.jpg",
+        "result_web_path": "web_results/res_denvau.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 73,
+                    "y": 26,
+                    "w": 48,
+                    "h": 59
+                },
+                "type": "Human",
+                "name": "Den vau",
+                "gender": "Man",
+                "accuracy": 94.24,
+                "master_avatar": "knowns_faces_1/person/Den Vau/DenVau1.jpeg"
+            }
+        ]
+    },
+    {
+        "source_file": "Screenshot 2026-03-17 032210.jpg",
+        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 032210.jpg",
+        "result_web_path": "web_results/res_Screenshot 2026-03-17 032210.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 245,
+                    "y": 65,
+                    "w": 56,
+                    "h": 75
+                },
+                "type": "Human",
+                "name": "Donald trump",
+                "gender": "Man",
+                "accuracy": 72.98,
+                "master_avatar": "knowns_faces_1/person/donald trump/Screenshot 2026-03-17 032306.jpg"
+            }
+        ]
+    },
+    {
+        "source_file": "Screenshot 2026-03-17 133554.jpg",
+        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 133554.jpg",
+        "result_web_path": "web_results/res_Screenshot 2026-03-17 133554.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 163,
+                    "y": 81,
+                    "w": 70,
+                    "h": 92
+                },
+                "type": "Human",
+                "name": "Putin",
+                "gender": "Man",
+                "accuracy": 88.4,
+                "master_avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
+            }
+        ]
+    },
+    {
+        "source_file": "Screenshot 2026-03-17 133612.jpg",
+        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 133612.jpg",
+        "result_web_path": "web_results/res_Screenshot 2026-03-17 133612.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 135,
+                    "y": 59,
+                    "w": 56,
+                    "h": 74
+                },
+                "type": "Human",
+                "name": "Putin",
+                "gender": "Man",
+                "accuracy": 88.73,
+                "master_avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
+            }
+        ]
+    },
+    {
+        "source_file": "Screenshot 2026-03-17 133621.jpg",
+        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 133621.jpg",
+        "result_web_path": "web_results/res_Screenshot 2026-03-17 133621.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 129,
+                    "y": 39,
+                    "w": 56,
+                    "h": 75
+                },
+                "type": "Human",
+                "name": "Putin",
+                "gender": "Man",
+                "accuracy": 77.49,
+                "master_avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
+            }
+        ]
+    },
+    {
+        "source_file": "b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg",
+        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg",
+        "result_web_path": "web_results/res_b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 416,
+                    "y": 77,
+                    "w": 96,
+                    "h": 105
+                },
+                "type": "Human",
+                "name": "Nghia",
+                "gender": "Man",
+                "accuracy": 80.47,
+                "master_avatar": "knowns_faces_1/person/nghia/nghia.jpg"
+            }
+        ]
+    }
+]
