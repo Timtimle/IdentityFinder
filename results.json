@@ -1,220 +1,556 @@
 [
     {
-        "source_file": "000101.jpg",
-        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\000101.jpg",
-        "result_web_path": "web_results/res_000101.jpg",
+        "source": "000101.jpg",
         "detections": [
             {
                 "box": {
-                    "x": 102,
-                    "y": 473,
-                    "w": 80,
-                    "h": 102
-                },
-                "type": "Human",
-                "name": "Nghia",
-                "gender": "Man",
-                "accuracy": 95.86,
-                "master_avatar": "knowns_faces_1/person/nghia/nghia.jpg"
-            },
-            {
-                "box": {
-                    "x": 411,
+                    "x": 412,
                     "y": 491,
                     "w": 44,
                     "h": 52
                 },
                 "type": "Human",
                 "name": "Khang",
-                "gender": "Man",
-                "accuracy": 84.69,
-                "master_avatar": "knowns_faces_1/person/khang/khang.jpg"
-            }
-        ]
-    },
-    {
-        "source_file": "000102.jpg",
-        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\000102.jpg",
-        "result_web_path": "web_results/res_000102.jpg",
-        "detections": [
-            {
-                "box": {
-                    "x": 507,
-                    "y": 529,
-                    "w": 37,
-                    "h": 45
-                },
-                "type": "Human",
-                "name": "Huy",
-                "gender": "Man",
-                "accuracy": 53.34,
-                "master_avatar": "knowns_faces_1/person/huy/Screenshot 2026-03-20 181817.jpg"
+                "accuracy": 90.16,
+                "avatar": "knowns_faces_1/person/khang/khang.jpg"
             },
             {
                 "box": {
-                    "x": 117,
-                    "y": 556,
-                    "w": 50,
-                    "h": 57
+                    "x": 104,
+                    "y": 480,
+                    "w": 81,
+                    "h": 93
                 },
                 "type": "Human",
                 "name": "Nghia",
-                "gender": "Man",
-                "accuracy": 73.7,
-                "master_avatar": "knowns_faces_1/person/nghia/nghia.jpg"
+                "accuracy": 96.46,
+                "avatar": "knowns_faces_1/person/nghia/nghia.jpg"
             }
         ]
     },
     {
-        "source_file": "denvau.jpg",
-        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\denvau.jpg",
-        "result_web_path": "web_results/res_denvau.jpg",
+        "source": "000102.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 118,
+                    "y": 553,
+                    "w": 50,
+                    "h": 60
+                },
+                "type": "Human",
+                "name": "Nghia",
+                "accuracy": 78.75,
+                "avatar": "knowns_faces_1/person/nghia/nghia.jpg"
+            },
+            {
+                "box": {
+                    "x": 508,
+                    "y": 528,
+                    "w": 37,
+                    "h": 46
+                },
+                "type": "Human",
+                "name": "Huy",
+                "accuracy": 74.46,
+                "avatar": "knowns_faces_1/person/Huy/Screenshot 2026-03-19 154206.png"
+            }
+        ]
+    },
+    {
+        "source": "denvau.jpg",
         "detections": [
             {
                 "box": {
                     "x": 73,
-                    "y": 26,
-                    "w": 48,
-                    "h": 59
+                    "y": 23,
+                    "w": 49,
+                    "h": 63
                 },
                 "type": "Human",
                 "name": "Den vau",
-                "gender": "Man",
-                "accuracy": 94.24,
-                "master_avatar": "knowns_faces_1/person/Den Vau/DenVau1.jpeg"
+                "accuracy": 98.05,
+                "avatar": "knowns_faces_1/person/Den Vau/DenVau1.jpeg"
             },
             {
                 "box": {
                     "x": 374,
-                    "y": 86,
-                    "w": 27,
-                    "h": 35
+                    "y": 85,
+                    "w": 29,
+                    "h": 37
                 },
                 "type": "Human",
                 "name": "Den vau",
-                "gender": "Man",
-                "accuracy": 55.32,
-                "master_avatar": "knowns_faces_1/person/Den Vau/DenVau1.jpeg"
+                "accuracy": 72.74,
+                "avatar": "knowns_faces_1/person/Den Vau/DenVau1.jpeg"
             }
         ]
     },
     {
-        "source_file": "Screenshot 2026-03-17 032210.jpg",
-        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 032210.jpg",
-        "result_web_path": "web_results/res_Screenshot 2026-03-17 032210.jpg",
+        "source": "Screenshot 2026-03-17 032210.jpg",
         "detections": [
             {
                 "box": {
-                    "x": 245,
-                    "y": 65,
-                    "w": 56,
-                    "h": 75
+                    "x": 244,
+                    "y": 63,
+                    "w": 58,
+                    "h": 76
                 },
                 "type": "Human",
                 "name": "Donald trump",
-                "gender": "Man",
-                "accuracy": 72.98,
-                "master_avatar": "knowns_faces_1/person/donald trump/Screenshot 2026-03-17 032306.jpg"
+                "accuracy": 82.71,
+                "avatar": "knowns_faces_1/person/donald trump/Screenshot 2026-03-17 032306.jpg"
             }
         ]
     },
     {
-        "source_file": "Screenshot 2026-03-17 133554.jpg",
-        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 133554.jpg",
-        "result_web_path": "web_results/res_Screenshot 2026-03-17 133554.jpg",
+        "source": "Screenshot 2026-03-17 133554.jpg",
         "detections": [
             {
                 "box": {
                     "x": 163,
-                    "y": 81,
+                    "y": 80,
                     "w": 70,
-                    "h": 92
+                    "h": 91
                 },
                 "type": "Human",
                 "name": "Putin",
-                "gender": "Man",
-                "accuracy": 88.4,
-                "master_avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
+                "accuracy": 89.32,
+                "avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
             }
         ]
     },
     {
-        "source_file": "Screenshot 2026-03-17 133612.jpg",
-        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 133612.jpg",
-        "result_web_path": "web_results/res_Screenshot 2026-03-17 133612.jpg",
+        "source": "Screenshot 2026-03-17 133612.jpg",
         "detections": [
             {
                 "box": {
-                    "x": 135,
-                    "y": 59,
-                    "w": 56,
-                    "h": 74
+                    "x": 137,
+                    "y": 61,
+                    "w": 54,
+                    "h": 71
                 },
                 "type": "Human",
                 "name": "Putin",
-                "gender": "Man",
-                "accuracy": 88.73,
-                "master_avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
+                "accuracy": 87.74,
+                "avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
             }
         ]
     },
     {
-        "source_file": "Screenshot 2026-03-17 133621.jpg",
-        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 133621.jpg",
-        "result_web_path": "web_results/res_Screenshot 2026-03-17 133621.jpg",
+        "source": "Screenshot 2026-03-17 133621.jpg",
         "detections": [
             {
                 "box": {
-                    "x": 129,
-                    "y": 39,
-                    "w": 56,
-                    "h": 75
+                    "x": 130,
+                    "y": 43,
+                    "w": 54,
+                    "h": 71
                 },
                 "type": "Human",
                 "name": "Putin",
-                "gender": "Man",
-                "accuracy": 77.49,
-                "master_avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
+                "accuracy": 85.81,
+                "avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
             }
         ]
     },
     {
-        "source_file": "Screenshot 2026-03-17 133631.jpg",
-        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 133631.jpg",
-        "result_web_path": "web_results/res_Screenshot 2026-03-17 133631.jpg",
+        "source": "Screenshot 2026-03-17 133631.jpg",
         "detections": [
             {
                 "box": {
-                    "x": 259,
-                    "y": 126,
+                    "x": 260,
+                    "y": 125,
                     "w": 39,
                     "h": 51
                 },
                 "type": "Human",
                 "name": "Putin",
-                "gender": "Man",
-                "accuracy": 79.95,
-                "master_avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
+                "accuracy": 86.73,
+                "avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
             }
         ]
     },
     {
-        "source_file": "b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg",
-        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg",
-        "result_web_path": "web_results/res_b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg",
+        "source": "Screenshot 2026-03-20 081028.png",
         "detections": [
             {
                 "box": {
-                    "x": 416,
-                    "y": 77,
-                    "w": 96,
-                    "h": 105
+                    "x": 30,
+                    "y": 62,
+                    "w": 142,
+                    "h": 185
                 },
                 "type": "Human",
-                "name": "Nghia",
-                "gender": "Man",
-                "accuracy": 80.47,
-                "master_avatar": "knowns_faces_1/person/nghia/nghia.jpg"
+                "name": "Huy",
+                "accuracy": 88.18,
+                "avatar": "knowns_faces_1/person/Huy/Screenshot 2026-03-19 154206.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 081041.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 93,
+                    "y": 91,
+                    "w": 176,
+                    "h": 193
+                },
+                "type": "Human",
+                "name": "Huy",
+                "accuracy": 87.6,
+                "avatar": "knowns_faces_1/person/Huy/Screenshot 2026-03-19 154206.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 082308.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 379,
+                    "y": 238,
+                    "w": 159,
+                    "h": 200
+                },
+                "type": "Human",
+                "name": "Huy",
+                "accuracy": 86.4,
+                "avatar": "knowns_faces_1/person/Huy/Screenshot 2026-03-19 154206.png"
+            },
+            {
+                "box": {
+                    "x": -17,
+                    "y": 364,
+                    "w": 174,
+                    "h": 278
+                },
+                "type": "Human",
+                "name": "Khiem",
+                "accuracy": 71.34,
+                "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 083223.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 89,
+                    "y": 91,
+                    "w": 179,
+                    "h": 224
+                },
+                "type": "Human",
+                "name": "Jaki",
+                "accuracy": 78.92,
+                "avatar": "knowns_faces_1/person/Jaki/Screenshot 2026-03-20 083043.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 084324.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 41,
+                    "y": 38,
+                    "w": 186,
+                    "h": 274
+                },
+                "type": "Human",
+                "name": "Khiem",
+                "accuracy": 98.41,
+                "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
+            },
+            {
+                "box": {
+                    "x": 530,
+                    "y": 194,
+                    "w": 93,
+                    "h": 116
+                },
+                "type": "Human",
+                "name": "Jaki",
+                "accuracy": 76.81,
+                "avatar": "knowns_faces_1/person/Jaki/Screenshot 2026-03-20 083043.png"
+            },
+            {
+                "box": {
+                    "x": 310,
+                    "y": 159,
+                    "w": 123,
+                    "h": 152
+                },
+                "type": "Human",
+                "name": "Jaki",
+                "accuracy": 78.84,
+                "avatar": "knowns_faces_1/person/Jaki/Screenshot 2026-03-20 083043.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 090426.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 106,
+                    "y": 8,
+                    "w": 140,
+                    "h": 179
+                },
+                "type": "Human",
+                "name": "Tokuda",
+                "accuracy": 78.89,
+                "avatar": "knowns_faces_1/person/Tokuda/Screenshot 2026-03-20 090342.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 090451.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 100,
+                    "y": 59,
+                    "w": 410,
+                    "h": 532
+                },
+                "type": "Human",
+                "name": "Tokuda",
+                "accuracy": 82.42,
+                "avatar": "knowns_faces_1/person/Tokuda/Screenshot 2026-03-20 090342.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 091203.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 94,
+                    "y": 83,
+                    "w": 242,
+                    "h": 302
+                },
+                "type": "Human",
+                "name": "Leonardio",
+                "accuracy": 86.83,
+                "avatar": "knowns_faces_1/person/Leonardio/Screenshot 2026-03-20 091127.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 091437.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 108,
+                    "y": 72,
+                    "w": 310,
+                    "h": 381
+                },
+                "type": "Human",
+                "name": "Leonardio",
+                "accuracy": 74.75,
+                "avatar": "knowns_faces_1/person/Leonardio/Screenshot 2026-03-20 091127.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 093215.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 40,
+                    "y": 69,
+                    "w": 87,
+                    "h": 109
+                },
+                "type": "Human",
+                "name": "Quoc nghiep",
+                "accuracy": 87.31,
+                "avatar": "knowns_faces_1/person/Quoc Nghiep/Screenshot 2026-03-20 093116.png"
+            },
+            {
+                "box": {
+                    "x": 236,
+                    "y": 30,
+                    "w": 81,
+                    "h": 107
+                },
+                "type": "Human",
+                "name": "Quoc co",
+                "accuracy": 81.07,
+                "avatar": "knowns_faces_1/person/Quoc Co/Screenshot 2026-03-20 093013.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 093243.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 724,
+                    "y": 88,
+                    "w": 133,
+                    "h": 183
+                },
+                "type": "Human",
+                "name": "Quoc nghiep",
+                "accuracy": 82.7,
+                "avatar": "knowns_faces_1/person/Quoc Nghiep/Screenshot 2026-03-20 093116.png"
+            },
+            {
+                "box": {
+                    "x": 58,
+                    "y": 77,
+                    "w": 127,
+                    "h": 168
+                },
+                "type": "Human",
+                "name": "Quoc co",
+                "accuracy": 78.32,
+                "avatar": "knowns_faces_1/person/Quoc Co/Screenshot 2026-03-20 093013.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 093349.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 194,
+                    "y": 205,
+                    "w": 88,
+                    "h": 121
+                },
+                "type": "Human",
+                "name": "Quoc co",
+                "accuracy": 96.4,
+                "avatar": "knowns_faces_1/person/Quoc Co/Screenshot 2026-03-20 093013.png"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-20 095538.png",
+        "detections": [
+            {
+                "box": {
+                    "x": 94,
+                    "y": 74,
+                    "w": 150,
+                    "h": 160
+                },
+                "type": "Human",
+                "name": "Obito",
+                "accuracy": 98.33,
+                "avatar": "knowns_faces_1/person/Obito/Screenshot 2026-03-20 095427.png"
+            }
+        ]
+    },
+    {
+        "source": "z7636527188145_53b0d71a08b81b2f615ba161a8c4d7c6.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 543,
+                    "y": 965,
+                    "w": 160,
+                    "h": 206
+                },
+                "type": "Human",
+                "name": "Khiem",
+                "accuracy": 85.84,
+                "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
+            }
+        ]
+    },
+    {
+        "source": "z7636527193502_ba08c128fcf17b073945c1d0961a2a9b.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 703,
+                    "y": 571,
+                    "w": 135,
+                    "h": 181
+                },
+                "type": "Human",
+                "name": "Khiem",
+                "accuracy": 80.82,
+                "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
+            }
+        ]
+    },
+    {
+        "source": "z7636527202057_07cb39f75104251a913f2834b9e41c4c.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 445,
+                    "y": 499,
+                    "w": 148,
+                    "h": 175
+                },
+                "type": "Human",
+                "name": "Khiem",
+                "accuracy": 76.3,
+                "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
+            }
+        ]
+    },
+    {
+        "source": "z7636556084149_0f98cb48f16ac3d52ce785bf3e0d591c.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 206,
+                    "y": 753,
+                    "w": 316,
+                    "h": 395
+                },
+                "type": "Human",
+                "name": "Khiem",
+                "accuracy": 80.71,
+                "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
+            }
+        ]
+    },
+    {
+        "source": "z7636556690850_7e9d3cecf6d6f01ff6970c8b7508c5a1.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 202,
+                    "y": 589,
+                    "w": 824,
+                    "h": 1083
+                },
+                "type": "Human",
+                "name": "Khiem",
+                "accuracy": 78.87,
+                "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
+            }
+        ]
+    },
+    {
+        "source": "z7636557475972_13f1dab8e669e2671ce7d3b5a69b55f0.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 310,
+                    "y": 512,
+                    "w": 322,
+                    "h": 368
+                },
+                "type": "Human",
+                "name": "Khiem",
+                "accuracy": 82.05,
+                "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
             }
         ]
     }

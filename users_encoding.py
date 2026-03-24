@@ -1,104 +1,104 @@
 import os
 import sys
 import io
+import logging
+import warnings
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+warnings.filterwarnings("ignore")
+
 import pyodbc
 import numpy as np
 import cv2
-from deepface import DeepFace
+from insightface.app import FaceAnalysis
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
-BASE_DIR = os.getcwd()
+CONN_STR          = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
+BASE_DIR          = os.getcwd()
 PERSON_KNOWN_PATH = os.path.join(BASE_DIR, "knowns_faces_1", "person")
 
-def sync_person_master_data():
+app = FaceAnalysis(name='buffalo_l', providers=['CPUExecutionProvider'])
+app.prepare(ctx_id=0, det_size=(640, 640))
+
+def setup_database(cursor):
+    """ Initialize UserEmbeddings table with updated schema """
+    cursor.execute("IF EXISTS (SELECT * FROM sysobjects WHERE name='UserEmbeddings' and xtype='U') DROP TABLE UserEmbeddings")
+    cursor.execute("""
+        CREATE TABLE UserEmbeddings (
+            EmbeddingID INT IDENTITY(1,1) PRIMARY KEY,
+            UserName NVARCHAR(255),
+            FaceData VARCHAR(MAX),
+            AngleHint VARCHAR(50)
+        )
+    """)
+
+def sync_with_insightface():
+    """ 
+    Sync master data using InsightFace's 3D-aligned embeddings.
+    This replaces the old DeepFace logic for superior accuracy on profile faces.
+    """
     if not os.path.exists(PERSON_KNOWN_PATH):
-        print(f"ERROR: Directory not found: {PERSON_KNOWN_PATH}")
-        return
+        print(f"ERROR: Directory {PERSON_KNOWN_PATH} not found."); return
 
     try:
         conn = pyodbc.connect(CONN_STR)
         cursor = conn.cursor()
-        print("=" * 130)
-        print(f"{'USER NAME':<25} | {'GENDER':<12} | {'VECTORS':<10} | {'ACTION':<15} | {'STATUS'}")
-        print("-" * 130)
+        setup_database(cursor)
+        cursor.execute("DELETE FROM Users")
+        conn.commit()
     except Exception as e:
-        print(f"SQL Connection Error: {e}")
-        return
+        print(f"Database Error: {e}"); return
 
-    for sub_name in os.listdir(PERSON_KNOWN_PATH):
+    print("=" * 115)
+    print(f"{'INSIGHTFACE BUFFALO-L IDENTITY SYNC - OMNI-DIRECTIONAL MODE':^115}")
+    print("=" * 115)
+
+    for sub_name in sorted(os.listdir(PERSON_KNOWN_PATH)):
         sub_path = os.path.join(PERSON_KNOWN_PATH, sub_name)
         if not os.path.isdir(sub_path): continue
 
         db_user_name = sub_name.lower()
         img_files = [f for f in os.listdir(sub_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        
         if not img_files: continue
 
-        cursor.execute("SELECT UserName FROM Users WHERE UserName = ?", (db_user_name,))
-        if cursor.fetchone():
-            print(f"{sub_name:<25} | {'--':<12} | {len(img_files):<10} | {'ALREADY SYNCED':<15} | SKIPPED")
-            continue
-
-        all_enc_strings = [] 
-        all_genders = [] 
+        embeddings_found = 0
+        print(f"[*] Extracting high-precision features for: {sub_name.upper()}")
 
         for filename in img_files:
             img_path = os.path.join(sub_path, filename)
-            try:
-                img = cv2.imread(img_path)
-                if img is None: continue
-                h, w = img.shape[:2]
-                center_x, center_y = w / 2, h / 2
+            img = cv2.imread(img_path)
+            if img is None: continue
 
-                results = DeepFace.analyze(
-                    img_path=img_path, actions=['gender'], 
-                    detector_backend='retinaface', enforce_detection=True, align=True, silent=True
-                )
+            faces = app.get(img)
 
-                embeddings = DeepFace.represent(
-                    img_path=img_path, model_name="Facenet512", 
-                    detector_backend='retinaface', enforce_detection=True, align=True
-                )
+            for face in faces:
+                vec = face.normed_embedding
+                vector_str = ",".join(map(str, vec))
+                
+                gender_str = "Man" if face.gender == 1 else "Woman"
 
-                if results and embeddings:
-                    best_face = min(embeddings, key=lambda e: 
-                        abs((e['facial_area']['x'] + e['facial_area']['w']/2) - center_x) + 
-                        abs((e['facial_area']['y'] + e['facial_area']['h']/2) - center_y)
+                try:
+                    cursor.execute(
+                        "INSERT INTO UserEmbeddings (UserName, FaceData, AngleHint) VALUES (?, ?, ?)",
+                        (db_user_name, vector_str, "insightface_feature")
                     )
-                    
-                    if best_face.get('face_confidence', 0) >= 0.4:
-                        vector = best_face['embedding']
-                        all_enc_strings.append(",".join(map(str, vector)))
-                        
-                        all_genders.append(results[0]['dominant_gender'])
+                    embeddings_found += 1
+                except: continue
 
-            except Exception as e:
-                print(f"  WARN: {filename} skipped — {e}")
-                continue
-
-        if all_enc_strings:
-            final_face_data = ";".join(all_enc_strings) 
-            
-            final_gender = max(set(all_genders), key=all_genders.count) if all_genders else "Unknown"
-            
-            abs_avatar_path = os.path.join(sub_path, img_files[0])
-            rel_avatar_path = os.path.relpath(abs_avatar_path, BASE_DIR).replace("\\", "/")
-
-            cursor.execute("""
-                INSERT INTO Users (UserName, FaceData, Gender, UserAvatar) 
-                VALUES (?, ?, ?, ?)
-            """, (db_user_name, final_face_data, final_gender, rel_avatar_path))
-            
+        if embeddings_found > 0:
+            rel_avatar = os.path.relpath(os.path.join(sub_path, img_files[0]), BASE_DIR).replace("\\", "/")
+            cursor.execute(
+                "INSERT INTO Users (UserName, FaceData, Gender, UserAvatar) VALUES (?, ?, ?, ?)",
+                (db_user_name, 'INSIGHTFACE_ENROLLED', 'Confirmed', rel_avatar)
+            )
             conn.commit()
-            print(f"{sub_name:<25} | {final_gender:<12} | {len(all_enc_strings):<10} | {'INSERTED':<15} | SUCCESS")
+            print(f"    [SUCCESS] Captured {embeddings_found} facial feature points.")
         else:
-            print(f"{sub_name:<25} | {'N/A':<12} | 0          | {'FAILED':<15} | ERROR")
+            print(f"    [FAILED] No faces detected in source images for {sub_name}.")
 
     conn.close()
-    print("-" * 130)
-    print("[*] All Master Identities synchronized successfully.")
+    print("=" * 115 + "\nINSIGHTFACE SYNC COMPLETE. SYSTEM IS NOW AT MAXIMUM PRECISION.")
 
 if __name__ == "__main__":
-    sync_person_master_data()
+    sync_with_insightface()

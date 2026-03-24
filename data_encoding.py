@@ -6,10 +6,15 @@ import torch
 import pyodbc
 import numpy as np
 import cv2
-from deepface import DeepFace
+import logging
+import warnings
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+warnings.filterwarnings("ignore")
+
+from insightface.app import FaceAnalysis
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 BASE_DIR = os.getcwd()
 ANIME_PATH = os.path.join(BASE_DIR, "anime_detection")
@@ -24,116 +29,101 @@ CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFi
 TEST_FOLDER = os.path.join(BASE_DIR, "test_per")
 WEIGHTS = os.path.join(ANIME_PATH, "weights", "yolov5s_anime.pt")
 
+app = FaceAnalysis(name='buffalo_l', providers=['CPUExecutionProvider'])
+app.prepare(ctx_id=0, det_size=(640, 640))
+
 device = torch.device('cpu')
-anime_model = attempt_load(WEIGHTS, map_location=device)
+anime_model = None
+if os.path.exists(WEIGHTS):
+    anime_model = attempt_load(WEIGHTS, map_location=device)
 
 def get_anime_locations(img0):
-    """ Nhận diện mặt anime bằng YOLOv5 """
+    if anime_model is None: return []
     img = letterbox(img0, 640)[0]
     img = torch.from_numpy(img.transpose(2, 0, 1)).to(device).float() / 255.0
     if img.ndimension() == 3: img = img.unsqueeze(0)
     with torch.no_grad():
         pred = anime_model(img, augment=False)[0]
-    pred = non_max_suppression(pred, 0.2, 0.45) 
+    pred = non_max_suppression(pred, 0.4, 0.45) 
     locs = []
     for det in pred:
         if len(det):
             det[:, :4] = scale_coords(img.shape[2:], det[:, :4], img0.shape).round()
             for *xyxy, conf, cls in det:
                 x1, y1, x2, y2 = map(int, xyxy)
-                w, h = x2 - x1, y2 - y1
-                locs.append({'region': [x1, y1, w, h]})
+                locs.append({'region': [x1, y1, x2 - x1, y2 - y1]})
     return locs
 
-def ultra_mass_encoding():
+def process_test_images():
     try:
         conn = pyodbc.connect(CONN_STR)
         cursor = conn.cursor()
         print("-" * 110)
-        print(f"{'MASS ENCODING START (FACENET-512 + ALIGN MODE)':^110}")
+        print(f"{'INSIGHTFACE MASS ENCODING START (MAX PRECISION)':^110}")
         print("-" * 110)
     except Exception as e:
-        print(f"Database Connection Error: {e}")
-        return
+        print(f"Database Error: {e}"); return
 
     if not os.path.exists(TEST_FOLDER):
-        print(f"Lỗi: Thư mục {TEST_FOLDER} không tồn tại!")
-        return
+        print(f"Folder not found: {TEST_FOLDER}"); return
 
+    cursor.execute("DELETE FROM ImageLabels")
+    conn.commit()
+    
     all_files = [f for f in os.listdir(TEST_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
     total = len(all_files)
+    start_time_total = time.time()
 
     for index, filename in enumerate(all_files):
-        cursor.execute("SELECT TOP 1 LabelID FROM ImageLabels WHERE FileName = ?", (filename,))
-        if cursor.fetchone(): continue
-
         file_path = os.path.join(TEST_FOLDER, filename)
-        is_anime = any(kw in filename.lower() for kw in ["anime", "waifu", "vn", "kazusa"])
-
+        is_anime_file = any(kw in filename.lower() for kw in ["anime", "waifu", "vn", "kazusa"])
+        
         try:
-            start_time = time.time()
-            faces_count = 0
-            
-            if is_anime:
-                image_cv = cv2.imread(file_path)
-                if image_cv is None: continue
-                anime_faces = get_anime_locations(image_cv)
+            current_faces = 0
+            img = cv2.imread(file_path)
+            if img is None: continue
+
+            if is_anime_file:
+                anime_faces = get_anime_locations(img)
                 for item in anime_faces:
                     x, y, w, h = item['region']
                     cursor.execute("""
                         INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)
                     """, (filename, file_path, 'Anime_Character', 'Anime', x, y, w, h))
-                faces_count = len(anime_faces)
-            
+                    current_faces += 1
             else:
-                objs = DeepFace.represent(
-                    img_path=file_path, 
-                    model_name="Facenet512", 
-                    detector_backend='retinaface', 
-                    enforce_detection=True, 
-                    align=True
-                )
-                
-                analysis = DeepFace.analyze(
-                    img_path=file_path, 
-                    actions=['gender'], 
-                    detector_backend='retinaface', 
-                    enforce_detection=True, 
-                    align=True, 
-                    silent=True
-                )
+                # InsightFace
+                faces = app.get(img)
 
-                for i, face_obj in enumerate(objs):
-                    conf = face_obj.get('face_confidence', 0)
+                for face in faces:
+                    box = face.bbox.astype(int)
+                    x1, y1, x2, y2 = box
+                    w, h = x2 - x1, y2 - y1
                     
-                    if conf > 0.6:
-                        r = face_obj['facial_area'] 
-                        vector_512 = face_obj['embedding']
-                        
-                        gender_label = "Unknown"
-                        if i < len(analysis):
-                            gender_label = analysis[i]['dominant_gender']
-                        
-                        if len(vector_512) == 512:
-                            enc_str = ",".join(map(str, vector_512))
-                            cursor.execute("""
-                                INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                            """, (filename, file_path, 'Person', gender_label, r['x'], r['y'], r['w'], r['h'], enc_str))
-                            faces_count += 1
+                    if w < 20: continue # Skip tiny noise
+
+                    # L2 Normalized Embedding from InsightFace
+                    vec = face.normed_embedding
+                    vector_str = ",".join(map(str, vec))
+                    
+                    gender = "Man" if face.gender == 1 else "Woman"
+                    
+                    cursor.execute("""
+                        INSERT INTO ImageLabels (FileName, FilePath, LabelName, Gender, BoxX, BoxY, BoxW, BoxH, FaceData)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (filename, file_path, 'Person', gender, int(x1), int(y1), int(w), int(h), vector_str))
+                    current_faces += 1
 
             conn.commit()
-            duration = time.time() - start_time
-            print(f"[{index+1}/{total}] {filename[:25]:<25} | Faces: {faces_count} | {duration:.2f}s | OK")
-            
+            print(f"[{index+1}/{total}] {filename[:30]:<30} | Detected: {current_faces} | Status: OK")
         except Exception as e:
-            print(f"  [!] Skip {filename}: {str(e)}")
+            print(f"  [!] Failed {filename}: {e}")
             conn.rollback()
 
     conn.close()
     print("-" * 110)
-    print("FINISHED: Data encoding completed with high accuracy.")
+    print(f"DONE. All images re-encoded with InsightFace in {time.time() - start_time_total:.2f}s")
 
 if __name__ == "__main__":
-    ultra_mass_encoding()
+    process_test_images()
