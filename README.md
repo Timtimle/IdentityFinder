@@ -39,9 +39,9 @@ IdentityFinder/
 │   └── person/           # Sub-folders named after each identity
 ├── test_per/             # Target images for inference (Target Data)
 ├── web_results/          # Generated results with bounding boxes
-├── sync_users.py         # Step 1: Identity Enrollment (The Brain)
-├── data_encoding.py      # Step 2: Mass Feature Extraction (The Worker)
-└── matching.py           # Step 3: Global Identity Matching (The Judge)
+├── users_encoding.py     # Identity Enrollment (The Brain)
+├── data_encoding.py      # Mass Feature Extraction (The Worker)
+└── multiUsersIdentity_Matching.py # Global Identity Matching (The Judge)
 ```
 
 
