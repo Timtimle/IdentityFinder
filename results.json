@@ -453,6 +453,40 @@
         ]
     },
     {
+        "source": "Screenshot 2026-03-24 200204.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 377,
+                    "y": 297,
+                    "w": 69,
+                    "h": 94
+                },
+                "type": "Human",
+                "name": "Takahashi rie",
+                "accuracy": 80.63,
+                "avatar": "knowns_faces_1/person/Takahashi Rie/41621.jpg"
+            }
+        ]
+    },
+    {
+        "source": "Screenshot 2026-03-24 200250.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 120,
+                    "y": 121,
+                    "w": 63,
+                    "h": 83
+                },
+                "type": "Human",
+                "name": "Takahashi rie",
+                "accuracy": 78.28,
+                "avatar": "knowns_faces_1/person/Takahashi Rie/41621.jpg"
+            }
+        ]
+    },
+    {
         "source": "z7636527188145_53b0d71a08b81b2f615ba161a8c4d7c6.jpg",
         "detections": [
             {
