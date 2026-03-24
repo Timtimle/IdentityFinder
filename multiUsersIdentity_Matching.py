@@ -9,7 +9,6 @@ import json
 from collections import defaultdict
 from scipy.spatial import distance
 
-# Hỗ trợ tiếng Việt cho Console
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
@@ -20,20 +19,12 @@ def normalize_vector(v):
     norm = np.linalg.norm(v)
     return v / norm if norm != 0 else v
 
-def draw_basic_bound(img, box, label, color):
-    """ Vẽ khung chữ nhật cơ bản nhất """
+def draw_simple_box(img, box, label, color):
+    """ Vẽ khung chữ nhật đơn giản nhất - Không banner, không màu mè """
     x, y, w, h = box['x'], box['y'], box['w'], box['h']
-    
-    # 1. Vẽ khung hình chữ nhật bao quanh mặt (Độ dày 2)
     cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
-
-    # 2. Vẽ nhãn tên phía trên khung
     font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 0.6
-    thickness = 2
-    
-    # Đặt text cách khung 10px về phía trên
-    cv2.putText(img, label, (x, y - 10), font, font_scale, color, thickness, cv2.LINE_AA)
+    cv2.putText(img, label, (x, y - 10), font, 0.6, color, 2, cv2.LINE_AA)
 
 def run_hybrid_matching():
     if os.path.exists(RESULT_IMG_DIR):
@@ -47,17 +38,14 @@ def run_hybrid_matching():
         print(f"Database Error: {e}")
         return
 
-    # 1. LOAD MASTER DATA
     cursor.execute("SELECT UserName, FaceData, UserAvatar, Gender FROM Users")
-    user_rows = cursor.fetchall()
     master_db = {}
-    for row in user_rows:
+    for row in cursor.fetchall():
         name = str(row[0]).capitalize()
         vectors = [normalize_vector(np.fromstring(v, sep=',')) for v in str(row[1]).split(';') if v.strip()]
         if vectors:
             master_db[name] = {"vectors": vectors, "avatar": row[2], "gender": row[3]}
     
-    # 2. LOAD TARGET IMAGES
     cursor.execute("SELECT FilePath, FaceData, BoxX, BoxY, BoxW, BoxH, FileName, Gender FROM ImageLabels")
     image_groups = defaultdict(list)
     for row in cursor.fetchall():
@@ -74,22 +62,21 @@ def run_hybrid_matching():
         if img is None: continue
 
         valid_detections = []
-        match_info_list = []
+        html_tags = []
 
         for f_row in faces:
             _, f_data, bx, by, bw, bh, filename, test_gender = f_row
-            if (bw * bh) < 2500: continue
+            if (bw * bh) < 600: continue
             
             box = {"x": bx, "y": by, "w": bw, "h": bh}
 
             if test_gender == 'Anime':
-                # Màu vàng hổ phách cho Anime
-                draw_basic_bound(img, box, "Anime Unit", (0, 165, 255))
+                draw_simple_box(img, box, "Anime", (0, 165, 255))
                 valid_detections.append({
-                    "box": box, "type": "Anime", "name": "Anime Character",
+                    "box": box, "type": "Anime", "name": "Anime Unit",
                     "gender": "Anime", "accuracy": 100.0, "master_avatar": ""
                 })
-                match_info_list.append(f"<span class='tag anime'>Anime</span>")
+                html_tags.append(f"<span class='tag anime'>Anime</span>")
             
             else:
                 if not f_data or not master_db: continue
@@ -98,24 +85,27 @@ def run_hybrid_matching():
                 scores = []
                 for name, info in master_db.items():
                     dists = [distance.cosine(curr_enc, v) for v in info["vectors"]]
-                    scores.append((name, min(dists), info["avatar"], info["gender"]))
+                    min_dist = min(dists)
+                    votes = sum(1 for d in dists if d < 0.38)
+                    scores.append((name, min_dist, info["avatar"], info["gender"], votes))
                 
                 scores.sort(key=lambda x: x[1])
-                best_name, best_dist, best_avatar, master_gender = scores[0]
+                b_name, b_dist, b_avatar, b_gender, b_votes = scores[0]
                 
-                if best_dist < 0.36:
-                    acc = max(0, min(99.9, (1 - (best_dist / 0.6)) * 100))
-                    
-                    # Màu xanh lá cây cho người (Basic)
-                    color = (0, 255, 0) 
-                    label_text = f"{best_name} {acc:.1f}%"
-                    draw_basic_bound(img, box, label_text, color)
+                is_match = False
+                if b_dist < 0.35:
+                    is_match = True
+                elif b_dist < 0.40 and b_votes >= 2:
+                    is_match = True
 
+                if is_match:
+                    acc = max(0, min(99.9, (1 - (b_dist / 0.6)) * 100))
+                    draw_simple_box(img, box, f"{b_name} {acc:.1f}%", (0, 255, 0))
                     valid_detections.append({
-                        "box": box, "type": "Human", "name": best_name,
-                        "gender": master_gender, "accuracy": round(acc, 2), "master_avatar": best_avatar
+                        "box": box, "type": "Human", "name": b_name,
+                        "gender": b_gender, "accuracy": round(acc, 2), "master_avatar": b_avatar
                     })
-                    match_info_list.append(f"<span class='tag human'>{best_name} ({master_gender})</span>")
+                    html_tags.append(f"<span class='tag human'>{b_name} ({acc:.1f}%)</span>")
 
         if valid_detections:
             res_filename = f"res_{os.path.basename(real_path)}"
@@ -128,15 +118,50 @@ def run_hybrid_matching():
                 "detections": valid_detections
             })
 
-            info_html = "".join(match_info_list)
-            html_items += f"""<div class="card"><div class="card-header">{os.path.basename(real_path)}</div>
-                            <div class="image-container"><img src="web_results/{res_filename}"></div>
-                            <div class="card-info">{info_html}</div></div>"""
+            tags_html = "".join(html_tags)
+            html_items += f"""
+            <div class="card">
+                <div class="card-header">File: {os.path.basename(real_path)}</div>
+                <div class="image-box">
+                    <img src="web_results/{res_filename}" alt="Result Image">
+                </div>
+                <div class="card-info">{tags_html}</div>
+            </div>
+            """
 
     with open("results.json", "w", encoding="utf-8") as jf:
         json.dump(winform_data, jf, indent=4, ensure_ascii=False)
-    
-    print(f"[*] DONE: Basic frames rendered. JSON updated.")
+
+    html_template = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {{ background: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; }}
+            h1 {{ text-align: center; color: #58a6ff; }}
+            .container {{ display: flex; flex-direction: column; align-items: center; gap: 20px; }}
+            .card {{ background: #161b22; border-radius: 10px; border: 1px solid #30363d; overflow: hidden; max-width: 95%; }}
+            .card-header {{ background: #21262d; padding: 10px; font-family: monospace; font-size: 0.9em; }}
+            .image-box {{ display: flex; justify-content: center; background: #000; padding: 5px; }}
+            /* KHÔNG PHÓNG TO ẢNH - CHỈ HIỆN ĐÚNG SIZE HOẶC NHỎ HƠN */
+            img {{ max-width: 100%; height: auto; display: block; }}
+            .card-info {{ padding: 15px; display: flex; gap: 8px; flex-wrap: wrap; }}
+            .tag {{ padding: 4px 10px; border-radius: 12px; font-size: 0.85em; border: 1px solid; font-weight: bold; }}
+            .human {{ color: #3fb950; border-color: rgba(63,185,80,0.4); background: rgba(63,185,80,0.1); }}
+            .anime {{ color: #d29922; border-color: rgba(210,153,34,0.4); background: rgba(210,153,34,0.1); }}
+        </style>
+    </head>
+    <body>
+        <h1>RECOGNITION REPORT</h1>
+        <div class="container">{html_items if html_items else "<h3>No data found.</h3>"}</div>
+    </body>
+    </html>
+    """
+    with open("report.html", "w", encoding="utf-8") as f:
+        f.write(html_template)
+
+    print(f"[*] DONE: Accuracy & Correct Image Size.")
     conn.close()
 
 if __name__ == "__main__":

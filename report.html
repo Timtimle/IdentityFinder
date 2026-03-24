@@ -1,70 +1,96 @@
 
     <!DOCTYPE html>
-    <html lang="en">
+    <html>
     <head>
         <meta charset="UTF-8">
-        <title>IdentityFinder Report</title>
         <style>
-            body { font-family: 'Segoe UI', sans-serif; background-color: #0d1117; color: #c9d1d9; padding: 20px; }
+            body { background: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; }
+            h1 { text-align: center; color: #58a6ff; }
             .container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-            .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 8px; width: 90%; max-width: 900px; }
-            .card-header { padding: 10px; background: #21262d; border-bottom: 1px solid #30363d; font-family: monospace; }
-            .card-info { padding: 10px; display: flex; gap: 10px; }
-            .tag { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; border: 1px solid; }
-            .human { color: #3fb950; border-color: #3fb950; }
-            .anime { color: #d29922; border-color: #d29922; }
-            img { width: 100%; height: auto; }
+            .card { background: #161b22; border-radius: 10px; border: 1px solid #30363d; overflow: hidden; max-width: 95%; }
+            .card-header { background: #21262d; padding: 10px; font-family: monospace; font-size: 0.9em; }
+            .image-box { display: flex; justify-content: center; background: #000; padding: 5px; }
+            /* KHÔNG PHÓNG TO ẢNH - CHỈ HIỆN ĐÚNG SIZE HOẶC NHỎ HƠN */
+            img { max-width: 100%; height: auto; display: block; }
+            .card-info { padding: 15px; display: flex; gap: 8px; flex-wrap: wrap; }
+            .tag { padding: 4px 10px; border-radius: 12px; font-size: 0.85em; border: 1px solid; font-weight: bold; }
+            .human { color: #3fb950; border-color: rgba(63,185,80,0.4); background: rgba(63,185,80,0.1); }
+            .anime { color: #d29922; border-color: rgba(210,153,34,0.4); background: rgba(210,153,34,0.1); }
         </style>
     </head>
     <body>
-        <h1 style="text-align:center;">AI Recognition Analysis</h1>
+        <h1>RECOGNITION REPORT</h1>
         <div class="container">
             <div class="card">
-                <div class="card-header">000101.jpg</div>
-                <div class="image-container"><img src="web_results/res_000101.jpg"></div>
-                <div class="card-info"><span class='tag human'>Nghia (Man) - 95.9%</span></div>
+                <div class="card-header">File: 000101.jpg</div>
+                <div class="image-box">
+                    <img src="web_results/res_000101.jpg" alt="Result Image">
+                </div>
+                <div class="card-info"><span class='tag human'>Nghia (95.9%)</span><span class='tag human'>Khang (84.7%)</span></div>
             </div>
             
             <div class="card">
-                <div class="card-header">000102.jpg</div>
-                <div class="image-container"><img src="web_results/res_000102.jpg"></div>
-                <div class="card-info"><span class='tag human'>Nghia (Man) - 73.7%</span></div>
+                <div class="card-header">File: 000102.jpg</div>
+                <div class="image-box">
+                    <img src="web_results/res_000102.jpg" alt="Result Image">
+                </div>
+                <div class="card-info"><span class='tag human'>Huy (53.3%)</span><span class='tag human'>Nghia (73.7%)</span></div>
             </div>
             
             <div class="card">
-                <div class="card-header">denvau.jpg</div>
-                <div class="image-container"><img src="web_results/res_denvau.jpg"></div>
-                <div class="card-info"><span class='tag human'>Den vau (Man) - 94.2%</span></div>
+                <div class="card-header">File: denvau.jpg</div>
+                <div class="image-box">
+                    <img src="web_results/res_denvau.jpg" alt="Result Image">
+                </div>
+                <div class="card-info"><span class='tag human'>Den vau (94.2%)</span><span class='tag human'>Den vau (55.3%)</span></div>
             </div>
             
             <div class="card">
-                <div class="card-header">Screenshot 2026-03-17 032210.jpg</div>
-                <div class="image-container"><img src="web_results/res_Screenshot 2026-03-17 032210.jpg"></div>
-                <div class="card-info"><span class='tag human'>Donald trump (Man) - 73.0%</span></div>
+                <div class="card-header">File: Screenshot 2026-03-17 032210.jpg</div>
+                <div class="image-box">
+                    <img src="web_results/res_Screenshot 2026-03-17 032210.jpg" alt="Result Image">
+                </div>
+                <div class="card-info"><span class='tag human'>Donald trump (73.0%)</span></div>
             </div>
             
             <div class="card">
-                <div class="card-header">Screenshot 2026-03-17 133554.jpg</div>
-                <div class="image-container"><img src="web_results/res_Screenshot 2026-03-17 133554.jpg"></div>
-                <div class="card-info"><span class='tag human'>Putin (Man) - 88.4%</span></div>
+                <div class="card-header">File: Screenshot 2026-03-17 133554.jpg</div>
+                <div class="image-box">
+                    <img src="web_results/res_Screenshot 2026-03-17 133554.jpg" alt="Result Image">
+                </div>
+                <div class="card-info"><span class='tag human'>Putin (88.4%)</span></div>
             </div>
             
             <div class="card">
-                <div class="card-header">Screenshot 2026-03-17 133612.jpg</div>
-                <div class="image-container"><img src="web_results/res_Screenshot 2026-03-17 133612.jpg"></div>
-                <div class="card-info"><span class='tag human'>Putin (Man) - 88.7%</span></div>
+                <div class="card-header">File: Screenshot 2026-03-17 133612.jpg</div>
+                <div class="image-box">
+                    <img src="web_results/res_Screenshot 2026-03-17 133612.jpg" alt="Result Image">
+                </div>
+                <div class="card-info"><span class='tag human'>Putin (88.7%)</span></div>
             </div>
             
             <div class="card">
-                <div class="card-header">Screenshot 2026-03-17 133621.jpg</div>
-                <div class="image-container"><img src="web_results/res_Screenshot 2026-03-17 133621.jpg"></div>
-                <div class="card-info"><span class='tag human'>Putin (Man) - 77.5%</span></div>
+                <div class="card-header">File: Screenshot 2026-03-17 133621.jpg</div>
+                <div class="image-box">
+                    <img src="web_results/res_Screenshot 2026-03-17 133621.jpg" alt="Result Image">
+                </div>
+                <div class="card-info"><span class='tag human'>Putin (77.5%)</span></div>
             </div>
             
             <div class="card">
-                <div class="card-header">b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg</div>
-                <div class="image-container"><img src="web_results/res_b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg"></div>
-                <div class="card-info"><span class='tag human'>Nghia (Man) - 80.5%</span></div>
+                <div class="card-header">File: Screenshot 2026-03-17 133631.jpg</div>
+                <div class="image-box">
+                    <img src="web_results/res_Screenshot 2026-03-17 133631.jpg" alt="Result Image">
+                </div>
+                <div class="card-info"><span class='tag human'>Putin (79.9%)</span></div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">File: b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg</div>
+                <div class="image-box">
+                    <img src="web_results/res_b540fa14-e811-4bba-8ff7-bdf75ae118a4.jpg" alt="Result Image">
+                </div>
+                <div class="card-info"><span class='tag human'>Nghia (80.5%)</span></div>
             </div>
             </div>
     </body>

@@ -16,6 +16,19 @@
                 "gender": "Man",
                 "accuracy": 95.86,
                 "master_avatar": "knowns_faces_1/person/nghia/nghia.jpg"
+            },
+            {
+                "box": {
+                    "x": 411,
+                    "y": 491,
+                    "w": 44,
+                    "h": 52
+                },
+                "type": "Human",
+                "name": "Khang",
+                "gender": "Man",
+                "accuracy": 84.69,
+                "master_avatar": "knowns_faces_1/person/khang/khang.jpg"
             }
         ]
     },
@@ -24,6 +37,19 @@
         "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\000102.jpg",
         "result_web_path": "web_results/res_000102.jpg",
         "detections": [
+            {
+                "box": {
+                    "x": 507,
+                    "y": 529,
+                    "w": 37,
+                    "h": 45
+                },
+                "type": "Human",
+                "name": "Huy",
+                "gender": "Man",
+                "accuracy": 53.34,
+                "master_avatar": "knowns_faces_1/person/huy/Screenshot 2026-03-20 181817.jpg"
+            },
             {
                 "box": {
                     "x": 117,
@@ -55,6 +81,19 @@
                 "name": "Den vau",
                 "gender": "Man",
                 "accuracy": 94.24,
+                "master_avatar": "knowns_faces_1/person/Den Vau/DenVau1.jpeg"
+            },
+            {
+                "box": {
+                    "x": 374,
+                    "y": 86,
+                    "w": 27,
+                    "h": 35
+                },
+                "type": "Human",
+                "name": "Den vau",
+                "gender": "Man",
+                "accuracy": 55.32,
                 "master_avatar": "knowns_faces_1/person/Den Vau/DenVau1.jpeg"
             }
         ]
@@ -135,6 +174,26 @@
                 "name": "Putin",
                 "gender": "Man",
                 "accuracy": 77.49,
+                "master_avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
+            }
+        ]
+    },
+    {
+        "source_file": "Screenshot 2026-03-17 133631.jpg",
+        "source_path": "e:\\Projects\\ML\\IdentityFinder\\test_per\\Screenshot 2026-03-17 133631.jpg",
+        "result_web_path": "web_results/res_Screenshot 2026-03-17 133631.jpg",
+        "detections": [
+            {
+                "box": {
+                    "x": 259,
+                    "y": 126,
+                    "w": 39,
+                    "h": 51
+                },
+                "type": "Human",
+                "name": "Putin",
+                "gender": "Man",
+                "accuracy": 79.95,
                 "master_avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
             }
         ]
