@@ -9,15 +9,12 @@ import json
 from collections import defaultdict
 from scipy.spatial import distance
 
-# Support Vietnamese for console output
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# --- CONFIGURATION ---
 CONN_STR = "Driver={SQL Server};Server=localhost\\SQLEXPRESS;Database=IdentityFinder;Trusted_Connection=yes;"
 BASE_DIR = os.getcwd() 
 RESULT_IMG_DIR = os.path.join(BASE_DIR, "web_results")
 
-# Threshold for InsightFace Buffalo-L (Distances > 0.45 will be ignored/hidden)
 RECOGNITION_THRESHOLD = 0.45
 
 def normalize_vector(v):
@@ -33,11 +30,6 @@ def draw_simple_box(img, box, label, color):
     cv2.putText(img, label, (x, y - 12), font, 0.7, color, 2, cv2.LINE_AA)
 
 def run_insight_matching():
-    """ 
-    Execute matching process. 
-    Faces that do not meet the threshold are skipped (no box drawn).
-    Full HTML report generation is included.
-    """
     if os.path.exists(RESULT_IMG_DIR):
         shutil.rmtree(RESULT_IMG_DIR)
     os.makedirs(RESULT_IMG_DIR)
@@ -49,9 +41,6 @@ def run_insight_matching():
         print(f"Database Error: {e}")
         return
 
-    # ==========================================
-    # 1. LOAD MASTER DATA (Known Embeddings)
-    # ==========================================
     cursor.execute("SELECT UserName, UserAvatar, Gender FROM Users")
     master_db = {}
     for row in cursor.fetchall():
@@ -68,9 +57,6 @@ def run_insight_matching():
                     master_db[name]["samples"].append({"vector": vec})
             except: continue
 
-    # ==========================================
-    # 2. MATCHING LOGIC (HIDDEN UNKNOWNS)
-    # ==========================================
     cursor.execute("SELECT FilePath, FaceData, BoxX, BoxY, BoxW, BoxH, FileName, Gender FROM ImageLabels")
     image_groups = defaultdict(list)
     for row in cursor.fetchall():
@@ -122,15 +108,13 @@ def run_insight_matching():
                     acc = max(0, min(99.9, (1 - (b_dist/1.5)) * 100))
                     draw_simple_box(img, box, f"{b_name} {acc:.1f}%", (0, 255, 0))
                     valid_detections.append({
-                        "box": box, "type": "Human", "name": b_name, "accuracy": round(acc, 2), "avatar": b_avatar
+                        "box": box, "type": "Human", "name": b_name, "gender": test_gender, "accuracy": round(acc, 2), "avatar": b_avatar
                     })
                     html_tags.append(f"<span class='tag human'>{b_name} ({acc:.1f}%)</span>")
                     print(f"    [+] KNOWN: {b_name:<12} | Dist: {b_dist:.3f}")
                 else:
-                    # Face is unknown -> No drawing, no logging
                     pass
 
-        # Save image and prepare HTML cards
         res_filename = f"res_{os.path.basename(real_path)}"
         cv2.imwrite(os.path.join(RESULT_IMG_DIR, res_filename), img)
         winform_data.append({"source": os.path.basename(real_path), "detections": valid_detections})
@@ -143,11 +127,9 @@ def run_insight_matching():
             <div class="card-info">{tags_html if tags_html else "<span class='tag'>No matches</span>"}</div>
         </div>"""
 
-    # Export JSON results
     with open("results.json", "w", encoding="utf-8") as jf:
         json.dump(winform_data, jf, indent=4, ensure_ascii=False)
 
-    # --- HTML REPORT GENERATION ---
     html_content = f"""
     <!DOCTYPE html>
     <html lang="en">

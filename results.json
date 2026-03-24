@@ -11,6 +11,7 @@
                 },
                 "type": "Human",
                 "name": "Khang",
+                "gender": "Man",
                 "accuracy": 90.16,
                 "avatar": "knowns_faces_1/person/khang/khang.jpg"
             },
@@ -23,6 +24,7 @@
                 },
                 "type": "Human",
                 "name": "Nghia",
+                "gender": "Man",
                 "accuracy": 96.46,
                 "avatar": "knowns_faces_1/person/nghia/nghia.jpg"
             }
@@ -40,6 +42,7 @@
                 },
                 "type": "Human",
                 "name": "Nghia",
+                "gender": "Woman",
                 "accuracy": 78.75,
                 "avatar": "knowns_faces_1/person/nghia/nghia.jpg"
             },
@@ -52,6 +55,7 @@
                 },
                 "type": "Human",
                 "name": "Huy",
+                "gender": "Man",
                 "accuracy": 74.46,
                 "avatar": "knowns_faces_1/person/Huy/Screenshot 2026-03-19 154206.png"
             }
@@ -69,6 +73,7 @@
                 },
                 "type": "Human",
                 "name": "Den vau",
+                "gender": "Man",
                 "accuracy": 98.05,
                 "avatar": "knowns_faces_1/person/Den Vau/DenVau1.jpeg"
             },
@@ -81,6 +86,7 @@
                 },
                 "type": "Human",
                 "name": "Den vau",
+                "gender": "Man",
                 "accuracy": 72.74,
                 "avatar": "knowns_faces_1/person/Den Vau/DenVau1.jpeg"
             }
@@ -98,6 +104,7 @@
                 },
                 "type": "Human",
                 "name": "Donald trump",
+                "gender": "Man",
                 "accuracy": 82.71,
                 "avatar": "knowns_faces_1/person/donald trump/Screenshot 2026-03-17 032306.jpg"
             }
@@ -115,6 +122,7 @@
                 },
                 "type": "Human",
                 "name": "Putin",
+                "gender": "Man",
                 "accuracy": 89.32,
                 "avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
             }
@@ -132,6 +140,7 @@
                 },
                 "type": "Human",
                 "name": "Putin",
+                "gender": "Man",
                 "accuracy": 87.74,
                 "avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
             }
@@ -149,6 +158,7 @@
                 },
                 "type": "Human",
                 "name": "Putin",
+                "gender": "Man",
                 "accuracy": 85.81,
                 "avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
             }
@@ -166,6 +176,7 @@
                 },
                 "type": "Human",
                 "name": "Putin",
+                "gender": "Man",
                 "accuracy": 86.73,
                 "avatar": "knowns_faces_1/person/Putin/2025-05-13T151431Z_1675301138_RC22HEAPY9HE_RTRMADP_3_RUSSIA-PUTIN-BUSINESS-1024x703.jpg"
             }
@@ -183,6 +194,7 @@
                 },
                 "type": "Human",
                 "name": "Huy",
+                "gender": "Man",
                 "accuracy": 88.18,
                 "avatar": "knowns_faces_1/person/Huy/Screenshot 2026-03-19 154206.png"
             }
@@ -200,6 +212,7 @@
                 },
                 "type": "Human",
                 "name": "Huy",
+                "gender": "Man",
                 "accuracy": 87.6,
                 "avatar": "knowns_faces_1/person/Huy/Screenshot 2026-03-19 154206.png"
             }
@@ -217,6 +230,7 @@
                 },
                 "type": "Human",
                 "name": "Huy",
+                "gender": "Man",
                 "accuracy": 86.4,
                 "avatar": "knowns_faces_1/person/Huy/Screenshot 2026-03-19 154206.png"
             },
@@ -229,6 +243,7 @@
                 },
                 "type": "Human",
                 "name": "Khiem",
+                "gender": "Man",
                 "accuracy": 71.34,
                 "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
             }
@@ -246,6 +261,7 @@
                 },
                 "type": "Human",
                 "name": "Jaki",
+                "gender": "Woman",
                 "accuracy": 78.92,
                 "avatar": "knowns_faces_1/person/Jaki/Screenshot 2026-03-20 083043.png"
             }
@@ -263,6 +279,7 @@
                 },
                 "type": "Human",
                 "name": "Khiem",
+                "gender": "Woman",
                 "accuracy": 98.41,
                 "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
             },
@@ -275,6 +292,7 @@
                 },
                 "type": "Human",
                 "name": "Jaki",
+                "gender": "Woman",
                 "accuracy": 76.81,
                 "avatar": "knowns_faces_1/person/Jaki/Screenshot 2026-03-20 083043.png"
             },
@@ -287,6 +305,7 @@
                 },
                 "type": "Human",
                 "name": "Jaki",
+                "gender": "Woman",
                 "accuracy": 78.84,
                 "avatar": "knowns_faces_1/person/Jaki/Screenshot 2026-03-20 083043.png"
             }
@@ -304,6 +323,7 @@
                 },
                 "type": "Human",
                 "name": "Tokuda",
+                "gender": "Man",
                 "accuracy": 78.89,
                 "avatar": "knowns_faces_1/person/Tokuda/Screenshot 2026-03-20 090342.png"
             }
@@ -321,6 +341,7 @@
                 },
                 "type": "Human",
                 "name": "Tokuda",
+                "gender": "Man",
                 "accuracy": 82.42,
                 "avatar": "knowns_faces_1/person/Tokuda/Screenshot 2026-03-20 090342.png"
             }
@@ -338,6 +359,7 @@
                 },
                 "type": "Human",
                 "name": "Leonardio",
+                "gender": "Man",
                 "accuracy": 86.83,
                 "avatar": "knowns_faces_1/person/Leonardio/Screenshot 2026-03-20 091127.png"
             }
@@ -355,6 +377,7 @@
                 },
                 "type": "Human",
                 "name": "Leonardio",
+                "gender": "Man",
                 "accuracy": 74.75,
                 "avatar": "knowns_faces_1/person/Leonardio/Screenshot 2026-03-20 091127.png"
             }
@@ -372,6 +395,7 @@
                 },
                 "type": "Human",
                 "name": "Quoc nghiep",
+                "gender": "Man",
                 "accuracy": 87.31,
                 "avatar": "knowns_faces_1/person/Quoc Nghiep/Screenshot 2026-03-20 093116.png"
             },
@@ -384,6 +408,7 @@
                 },
                 "type": "Human",
                 "name": "Quoc co",
+                "gender": "Man",
                 "accuracy": 81.07,
                 "avatar": "knowns_faces_1/person/Quoc Co/Screenshot 2026-03-20 093013.png"
             }
@@ -401,6 +426,7 @@
                 },
                 "type": "Human",
                 "name": "Quoc nghiep",
+                "gender": "Man",
                 "accuracy": 82.7,
                 "avatar": "knowns_faces_1/person/Quoc Nghiep/Screenshot 2026-03-20 093116.png"
             },
@@ -413,6 +439,7 @@
                 },
                 "type": "Human",
                 "name": "Quoc co",
+                "gender": "Man",
                 "accuracy": 78.32,
                 "avatar": "knowns_faces_1/person/Quoc Co/Screenshot 2026-03-20 093013.png"
             }
@@ -430,6 +457,7 @@
                 },
                 "type": "Human",
                 "name": "Quoc co",
+                "gender": "Man",
                 "accuracy": 96.4,
                 "avatar": "knowns_faces_1/person/Quoc Co/Screenshot 2026-03-20 093013.png"
             }
@@ -447,6 +475,7 @@
                 },
                 "type": "Human",
                 "name": "Obito",
+                "gender": "Man",
                 "accuracy": 98.33,
                 "avatar": "knowns_faces_1/person/Obito/Screenshot 2026-03-20 095427.png"
             }
@@ -464,6 +493,7 @@
                 },
                 "type": "Human",
                 "name": "Takahashi rie",
+                "gender": "Woman",
                 "accuracy": 80.63,
                 "avatar": "knowns_faces_1/person/Takahashi Rie/41621.jpg"
             }
@@ -481,6 +511,7 @@
                 },
                 "type": "Human",
                 "name": "Takahashi rie",
+                "gender": "Woman",
                 "accuracy": 78.28,
                 "avatar": "knowns_faces_1/person/Takahashi Rie/41621.jpg"
             }
@@ -498,6 +529,7 @@
                 },
                 "type": "Human",
                 "name": "Khiem",
+                "gender": "Woman",
                 "accuracy": 85.84,
                 "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
             }
@@ -515,6 +547,7 @@
                 },
                 "type": "Human",
                 "name": "Khiem",
+                "gender": "Man",
                 "accuracy": 80.82,
                 "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
             }
@@ -532,6 +565,7 @@
                 },
                 "type": "Human",
                 "name": "Khiem",
+                "gender": "Woman",
                 "accuracy": 76.3,
                 "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
             }
@@ -549,6 +583,7 @@
                 },
                 "type": "Human",
                 "name": "Khiem",
+                "gender": "Man",
                 "accuracy": 80.71,
                 "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
             }
@@ -566,6 +601,7 @@
                 },
                 "type": "Human",
                 "name": "Khiem",
+                "gender": "Man",
                 "accuracy": 78.87,
                 "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
             }
@@ -583,6 +619,7 @@
                 },
                 "type": "Human",
                 "name": "Khiem",
+                "gender": "Man",
                 "accuracy": 82.05,
                 "avatar": "knowns_faces_1/person/khiem/z7636527199913_04050e32252e6ca6cdc065b4714e1d24.jpg"
             }

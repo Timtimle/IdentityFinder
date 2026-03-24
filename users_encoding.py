@@ -88,14 +88,13 @@ def sync_with_insightface():
 
         if embeddings_found > 0:
             rel_avatar = os.path.relpath(os.path.join(sub_path, img_files[0]), BASE_DIR).replace("\\", "/")
+            
             cursor.execute(
                 "INSERT INTO Users (UserName, FaceData, Gender, UserAvatar) VALUES (?, ?, ?, ?)",
-                (db_user_name, 'INSIGHTFACE_ENROLLED', 'Confirmed', rel_avatar)
+                (db_user_name, 'INSIGHTFACE_ENROLLED', gender_str, rel_avatar)
             )
             conn.commit()
             print(f"    [SUCCESS] Captured {embeddings_found} facial feature points.")
-        else:
-            print(f"    [FAILED] No faces detected in source images for {sub_name}.")
 
     conn.close()
     print("=" * 115 + "\nINSIGHTFACE SYNC COMPLETE. SYSTEM IS NOW AT MAXIMUM PRECISION.")
