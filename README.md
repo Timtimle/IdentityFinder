@@ -11,9 +11,10 @@ IdentityFinder leverages a custom YOLOv5s model optimized for Anime faces and Re
 
 | Task | Backend | Speed (CPU) | Precision |
 | :--- | :--- | :--- | :--- |
+| Human Analysis | InsightFace (Buffalo-L) | ~150ms/img | 0.99
 | Anime Detect | YOLOv5s | ~50ms/img | 0.95 |
-| Human Detect | RetinaFace | ~120ms/img | 0.98 |
-| Facial Encoding | FaceNet (512-d) | ~25ms/face | Strict 0.38 (Cosine) |
+| Alignment | 3D Coordinate Warp | ~10ms/face | SOTA |
+| Facial Encoding | ArcFace (512-d) | ~30ms/face | Distance-based |
 
 ---
 
@@ -22,21 +23,25 @@ IdentityFinder leverages a custom YOLOv5s model optimized for Anime faces and Re
 Installation is straightforward. You will need Python 3.8+ and a local SQL Server instance.
 
 ```bash
-pip install torch face_recognition deepface pyodbc numpy opencv-python
+# SOTA Face Analysis Engine
+pip install insightface onnxruntime
+
+# Anime Detection & Utilities
+pip install torch opencv-python pyodbc numpy scipy
 ```
 
 ## Directory Structure
 
 ```text
 IdentityFinder/
-├── anime_detection/       # YOLOv5 core logic & weights
-├── known_faces/           # MASTER DATA (Training samples)
-│   ├── anime/             # Sub-folder for Anime characters
-│   └── person/            # Sub-folder for Real Humans
-├── test_100_celebA/       # Target images to be labeled (Inference data)
-├── users_encoding.py      # Step 1: Identity Sync (The Brain)
-├── data_encoding.py       # Step 2: Mass Extraction (The Worker)
-└── multiUsersIdentity.py  # Step 3: Final Matching (The Judge)
+├── anime_detection/      # YOLOv5 core logic & custom weights
+├── knowns_faces_1/       # MASTER DATA (High-quality samples)
+│   └── person/           # Sub-folders named after each identity
+├── test_per/             # Target images for inference (Target Data)
+├── web_results/          # Generated results with bounding boxes
+├── sync_users.py         # Step 1: Identity Enrollment (The Brain)
+├── data_encoding.py      # Step 2: Mass Feature Extraction (The Worker)
+└── matching.py           # Step 3: Global Identity Matching (The Judge)
 ```
 
 
@@ -80,5 +85,6 @@ Run the matcher to compare extracted features against the Master database.
 ```bash
 python multiUsersIdentity.py
 ```
-<img width="841" height="403" alt="image" src="https://github.com/user-attachments/assets/2a6806bc-2b6d-471a-a408-c648a9451a41" />
-<img width="429" height="632" alt="image" src="https://github.com/user-attachments/assets/d20a5841-07b5-439e-bbb1-3b83c2973251" />
+<img width="841" height="807" alt="image" src="https://github.com/user-attachments/assets/8726a5ef-0bcc-4cbb-9404-ae6f53c7cb53" />
+<img width="706" height="533" alt="image" src="https://github.com/user-attachments/assets/c502ac7d-e5e4-41aa-a2c1-2b72c779b9da" />
+
